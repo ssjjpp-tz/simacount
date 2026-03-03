@@ -6,7 +6,7 @@
 // ==================== 多语言数据 ====================
 const I18N = {
     zh: {
-        title: '潇龙霞八字黄历 v2.1',
+        title: '潇龙霞大师掐指问天',
         subtitle: '八字命理 · 详细解读 · 多语言支持',
         birthInfo: '出生信息',
         targetDate: '测算日期',
@@ -35,7 +35,7 @@ const I18N = {
         dayun: '大运简批'
     },
     en: {
-        title: 'Xiao Long Xia Bazi Calendar v2.1',
+        title: 'Master Xiao Long Xia Divine Divination',
         subtitle: 'Destiny Analysis · Detailed Reading · Multi-Language',
         birthInfo: 'Birth Information',
         targetDate: 'Target Date',
@@ -64,7 +64,7 @@ const I18N = {
         dayun: 'Decade Fortune'
     },
     ar: {
-        title: 'تقويم باجوا شياو لونغ شيا v2.1',
+        title: 'السيد شياو لونغ شيا التكهن الإلهي',
         subtitle: 'التحليل المفصل · دعم متعدد اللغات',
         birthInfo: 'معلومات الميلاد',
         targetDate: 'التاريخ المطلوب',
