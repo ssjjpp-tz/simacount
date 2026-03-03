@@ -1398,12 +1398,19 @@ calculateAll = function() {
 };
 
 // ==================== 算命方式切换 ====================
-function switchDivination(type) {
+function switchDivination(type, clickedTab) {
     // 切换标签样式
     document.querySelectorAll('.divination-tab').forEach(tab => {
         tab.classList.remove('active');
     });
-    event.target.classList.add('active');
+    
+    // 如果没有传入 clickedTab，则通过事件获取
+    if (!clickedTab && typeof event !== 'undefined') {
+        clickedTab = event.target;
+    }
+    if (clickedTab) {
+        clickedTab.classList.add('active');
+    }
     
     // 隐藏所有算命区域
     document.getElementById('tarotDivination').style.display = 'none';

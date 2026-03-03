@@ -412,6 +412,8 @@
         @media (max-width: 768px) {
             body { padding: 10px; }
             h1 { font-size: 1.6em; }
+            
+            /* 日期选择器 */
             .datetime-row {
                 grid-template-columns: repeat(3, 1fr);
                 gap: 8px;
@@ -425,6 +427,8 @@
                 min-height: 48px;
                 font-size: 16px;
             }
+            
+            /* 语言选择器 */
             .lang-selector {
                 position: relative;
                 top: auto;
@@ -435,14 +439,107 @@
             .lang-selector select {
                 min-height: 44px;
                 font-size: 16px;
+                padding: 12px 20px;
+            }
+            
+            /* 性别选择 */
+            .gender-row {
+                gap: 15px;
+            }
+            .gender-option {
+                flex: 1;
+                justify-content: center;
+                min-height: 48px;
+                font-size: 16px;
+                -webkit-tap-highlight-color: rgba(212,175,55,0.3);
+            }
+            
+            /* 按钮 */
+            button {
+                min-height: 52px;
+                font-size: 18px;
+                padding: 16px 20px;
+                -webkit-tap-highlight-color: rgba(212,175,55,0.3);
+            }
+            button:active {
+                transform: scale(0.98);
+            }
+            
+            /* 算命方式标签 */
+            .divination-tabs {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            .divination-tab {
+                flex: 1 1 calc(50% - 8px);
+                min-height: 48px;
+                font-size: 15px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 12px 8px;
+                -webkit-tap-highlight-color: rgba(212,175,55,0.3);
+            }
+            .divination-tab:active {
+                background: rgba(212,175,55,0.3);
+            }
+            
+            /* 逆天改命选项 */
+            .fate-options {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            .fate-option {
+                min-height: 100px;
+                padding: 20px 10px;
+                -webkit-tap-highlight-color: rgba(212,175,55,0.3);
+            }
+            .fate-option:active {
+                transform: scale(0.97);
+                background: rgba(212,175,55,0.2);
+            }
+            
+            /* 输入框 */
+            input[type="text"] {
+                min-height: 48px;
+                font-size: 16px;
+                padding: 12px 14px;
+            }
+            
+            /* 结果卡片 */
+            .result-card {
+                padding: 20px 15px;
+            }
+            .score-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            /* 抽签/起卦按钮 */
+            #tarotDivination button,
+            #chouqianDivination button,
+            #zhouyiDivination button,
+            #xingzuoDivination button {
+                width: 100% !important;
+                min-height: 52px;
+                font-size: 17px;
             }
         }
         
         /* iOS 特定修复 */
         @supports (-webkit-touch-callout: none) {
-            select {
+            select, input, button {
                 font-size: 16px !important;
                 min-height: 44px;
+            }
+            .gender-option, .divination-tab, .fate-option {
+                cursor: pointer;
+            }
+        }
+        
+        /* 触摸反馈 */
+        @media (hover: none) {
+            button:active, .fate-option:active, .divination-tab:active, .gender-option:active {
+                opacity: 0.8;
             }
         }
     </style>
@@ -486,7 +583,12 @@
                 <label id="birthTimeLabel">出生时间</label>
                 <div class="datetime-row">
                     <select id="birthHour"><option value="">时</option></select>
-                    <select id="birthMinute"><option value="0">分</option></select>
+                    <select id="birthMinute">
+                        <option value="0">00分</option>
+                        <option value="15">15分</option>
+                        <option value="30">30分</option>
+                        <option value="45">45分</option>
+                    </select>
                 </div>
             </div>
             
@@ -634,10 +736,10 @@
                 </p>
                 
                 <div class="divination-tabs">
-                    <div class="divination-tab active" onclick="switchDivination('tarot')">🔮 塔罗牌</div>
-                    <div class="divination-tab" onclick="switchDivination('chouqian')">🎋 观音灵签</div>
-                    <div class="divination-tab" onclick="switchDivination('zhouyi')">☯️ 周易起卦</div>
-                    <div class="divination-tab" onclick="switchDivination('xingzuo')">⭐ 星盘占卜</div>
+                    <div class="divination-tab active" onclick="switchDivination('tarot', this)">🔮 塔罗牌</div>
+                    <div class="divination-tab" onclick="switchDivination('chouqian', this)">🎋 观音灵签</div>
+                    <div class="divination-tab" onclick="switchDivination('zhouyi', this)">☯️ 周易起卦</div>
+                    <div class="divination-tab" onclick="switchDivination('xingzuo', this)">⭐ 星盘占卜</div>
                 </div>
                 
                 <!-- 塔罗牌区域 -->
