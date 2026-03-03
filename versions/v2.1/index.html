@@ -14,7 +14,7 @@
             padding: 20px;
         }
         .container { max-width: 900px; margin: 0 auto; }
-        header { text-align: center; padding: 30px 0; }
+        header { text-align: center; padding: 30px 0; position: relative; }
         h1 {
             font-size: 2.2em;
             background: linear-gradient(45deg, #d4af37, #f4e5c2, #d4af37);
@@ -28,7 +28,7 @@
         .lang-selector {
             position: absolute;
             top: 20px;
-            right: 20px;
+            right: 0;
         }
         .lang-selector select {
             padding: 8px 15px;
@@ -62,7 +62,7 @@
             font-weight: bold;
             font-size: 0.9em;
         }
-        input, select {
+        input, select, textarea {
             width: 100%;
             padding: 10px 14px;
             border: 1px solid rgba(212,175,55,0.3);
@@ -70,6 +70,7 @@
             background: rgba(0,0,0,0.3);
             color: #e4e4e4;
             font-size: 15px;
+            font-family: inherit;
         }
         .datetime-row {
             display: grid;
@@ -101,6 +102,7 @@
             font-size: 17px;
             font-weight: bold;
             cursor: pointer;
+            transition: all 0.3s;
         }
         button:hover {
             transform: translateY(-2px);
@@ -256,18 +258,34 @@
         .extra-card h4 { color: #d4af37; margin-bottom: 10px; }
         .extra-content { color: #b0b0b0; line-height: 1.7; }
         
-        .footer {
-            text-align: center;
-            padding: 40px 20px 20px;
-            color: #666;
-            font-size: 0.9em;
+        /* 算命方式选择 */
+        .divination-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
         }
-        .footer a { color: #d4af37; text-decoration: none; }
+        .divination-tab {
+            flex: 1;
+            min-width: 100px;
+            padding: 12px 20px;
+            background: rgba(212,175,55,0.1);
+            border: 1px solid rgba(212,175,55,0.3);
+            border-radius: 8px;
+            color: #d4af37;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .divination-tab:hover, .divination-tab.active {
+            background: rgba(212,175,55,0.3);
+            border-color: #d4af37;
+        }
         
         /* 塔罗牌样式 */
         .tarot-card {
-            width: 120px;
-            height: 200px;
+            width: 100px;
+            height: 170px;
             background: linear-gradient(135deg, #1a1a2e, #2d1b4e);
             border: 2px solid #d4af37;
             border-radius: 10px;
@@ -281,118 +299,109 @@
             overflow: hidden;
         }
         .tarot-card:hover {
-            transform: translateY(-10px) rotateY(10deg);
+            transform: translateY(-10px);
             box-shadow: 0 15px 30px rgba(212,175,55,0.4);
         }
-        .tarot-card.reversed {
-            transform: rotate(180deg);
-        }
         .tarot-card-back {
-            background: linear-gradient(135deg, #2d1b4e, #1a1a2e);
-            background-image: repeating-linear-gradient(
-                45deg,
-                transparent,
-                transparent 10px,
-                rgba(212,175,55,0.1) 10px,
-                rgba(212,175,55,0.1) 20px
-            );
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
         .tarot-card-front {
             display: none;
+            width: 100%;
+            height: 100%;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
         }
         .tarot-card.flipped .tarot-card-back { display: none; }
         .tarot-card.flipped .tarot-card-front { display: flex; }
         
-        .tarot-number {
-            font-size: 2em;
+        /* 抽签样式 */
+        .chouqian-container {
+            text-align: center;
+            padding: 30px;
+        }
+        .qian-container {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(212,175,55,0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(212,175,55,0.3);
+        }
+        .qian-number {
+            font-size: 3em;
             color: #d4af37;
             font-weight: bold;
-        }
-        .tarot-name {
-            font-size: 0.9em;
-            color: #f4e5c2;
-            text-align: center;
-            padding: 5px;
-        }
-        .tarot-position {
-            position: absolute;
-            top: 5px;
-            font-size: 0.75em;
-            color: #d4af37;
-            background: rgba(0,0,0,0.5);
-            padding: 2px 8px;
-            border-radius: 10px;
+            margin-bottom: 10px;
         }
         
-        .tarot-reading-box {
-            background: linear-gradient(135deg, rgba(45,27,78,0.3), rgba(26,26,46,0.3));
+        /* 逆天改命 */
+        .change-fate-section {
+            background: linear-gradient(135deg, rgba(255,0,0,0.1), rgba(128,0,128,0.1));
+            border: 2px solid rgba(255,0,0,0.3);
+            border-radius: 16px;
+            padding: 25px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .change-fate-section h3 {
+            color: #ff6b6b;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+        .fate-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .fate-option {
+            background: rgba(0,0,0,0.3);
             border: 1px solid rgba(212,175,55,0.3);
             border-radius: 12px;
             padding: 20px;
-            margin: 15px 0;
+            cursor: pointer;
+            transition: all 0.3s;
         }
-        .tarot-reading-box h4 {
-            color: #d4af37;
-            margin-bottom: 15px;
-            font-size: 1.1em;
+        .fate-option:hover {
+            transform: translateY(-5px);
+            border-color: #d4af37;
         }
-        .tarot-meaning {
-            line-height: 1.9;
-            color: #d0d0d0;
-            margin-bottom: 15px;
-        }
-        .combined-reading {
-            background: linear-gradient(135deg, rgba(212,175,55,0.1), rgba(212,175,55,0.05));
-            border-left: 4px solid #d4af37;
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 0 8px 8px 0;
-        }
-        .combined-reading h5 {
-            color: #f4e5c2;
+        .fate-icon {
+            font-size: 2.5em;
             margin-bottom: 10px;
         }
-        .advice-list {
-            list-style: none;
-            padding: 0;
-        }
-        .advice-list li {
-            padding: 8px 0;
-            padding-left: 25px;
-            position: relative;
-            color: #e4e4e4;
-        }
-        .advice-list li::before {
-            content: "✦";
-            position: absolute;
-            left: 0;
+        .fate-name {
             color: #d4af37;
+            font-weight: bold;
         }
-        .outcome-section {
-            background: linear-gradient(135deg, rgba(0,255,0,0.1), rgba(0,255,0,0.05));
-            border: 1px solid rgba(0,255,0,0.3);
-            border-radius: 12px;
-            padding: 20px;
-            margin: 15px 0;
-        }
-        .outcome-section h4 {
-            color: #90ee90;
-            margin-bottom: 15px;
+        
+        .footer {
+            text-align: center;
+            padding: 40px 20px 20px;
+            color: #666;
+            font-size: 0.9em;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- 语言选择 -->
-        <div class="lang-selector">
-            <select id="langSelect" onchange="changeLanguage()">
-                <option value="zh">中文</option>
-                <option value="en">English</option>
-                <option value="ar">العربية</option>
-            </select>
-        </div>
-        
         <header>
+            <div class="lang-selector">
+                <select id="langSelect" onchange="changeLanguage()">
+                    <option value="zh">中文</option>
+                    <option value="en">English</option>
+                    <option value="ar">العربية</option>
+                </select>
+            </div>
+            
             <h1 id="pageTitle">潇龙霞八字黄历 v2.1</h1>
             <p class="subtitle" id="pageSubtitle">八字命理 · 详细解读 · 多语言支持</p>
         </header>
@@ -449,45 +458,18 @@
         
         <button onclick="calculateAll()" id="calcBtn">开始测算</button>
         
-        <!-- 塔罗牌占卜区域 -->
-        <div class="result-section" id="tarotSection" style="margin-top: 30px;">
-            <div class="input-section">
-                <div class="section-title">🔮 塔罗牌占卜</div>
-                
-                <div class="form-group">
-                    <label>你想问什么问题？（如：今天适合表白吗？这份工作要不要接受？）</label>
-                    <input type="text" id="tarotQuestion" placeholder="请输入你的问题..." style="width: 100%; padding: 12px;">
-                </div>
-                
-                <div style="text-align: center; margin: 20px 0;">
-                    <button onclick="drawTarot()" id="drawTarotBtn" style="width: auto; padding: 15px 40px; font-size: 16px;">抽取塔罗牌</button>
-                </div>
-                
-                <!-- 塔罗牌展示区域 -->
-                <div id="tarotCardsDisplay" style="display: none; margin-top: 20px;">
-                    <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin: 20px 0;" id="tarotCardsContainer">
-                        <!-- 塔罗牌将在这里显示 -->
-                    </div>
-                    
-                    <div id="tarotReading" style="margin-top: 20px;">
-                        <!-- 塔罗解读将在这里显示 -->
-                    </div>
-                </div>
-            </div>
-        </div>
-        
         <!-- 结果区域 -->
         <div class="result-section" id="result">
             
             <!-- 八字命盘 -->
             <div class="result-card">
-                <div class="section-title">八字命盘</div>
+                <div class="section-title" id="baziChartTitle">八字命盘</div>
                 <table class="sizhu-table">
                     <tr>
-                        <th>年柱</th>
-                        <th>月柱</th>
-                        <th>日柱</th>
-                        <th>时柱</th>
+                        <th id="yearPillarLabel">年柱</th>
+                        <th id="monthPillarLabel">月柱</th>
+                        <th id="dayPillarLabel">日柱</th>
+                        <th id="hourPillarLabel">时柱</th>
                     </tr>
                     <tr id="sizhuRow"></tr>
                 </table>
@@ -495,88 +477,200 @@
             
             <!-- 详细解读 -->
             <div class="result-card">
-                <div class="section-title">详细解读</div>
+                <div class="section-title" id="detailReadingTitle">详细解读</div>
                 
                 <div class="detail-box">
-                    <h4 id="readingTitle">日主关系分析</h4>
+                    <h4 id="dayRelationTitle">日主关系分析</h4>
                     <div class="detail-content" id="readingContent"></div>
                 </div>
                 
                 <div class="detail-box">
-                    <h4>事业运势详解</h4>
+                    <h4 id="careerTitle">事业运势详解</h4>
                     <div class="detail-content" id="careerDetail"></div>
                 </div>
                 
                 <div class="detail-box">
-                    <h4>财运详解</h4>
+                    <h4 id="wealthTitle">财运详解</h4>
                     <div class="detail-content" id="wealthDetail"></div>
                 </div>
                 
                 <div class="detail-box">
-                    <h4>感情运势详解</h4>
+                    <h4 id="loveTitle">感情运势详解</h4>
                     <div class="detail-content" id="loveDetail"></div>
                 </div>
                 
                 <div class="detail-box">
-                    <h4>健康提示</h4>
+                    <h4 id="healthTitle">健康提示</h4>
                     <div class="detail-content" id="healthDetail"></div>
                 </div>
             </div>
             
             <!-- 运势评分 -->
             <div class="result-card">
-                <div class="section-title">今日运势评分</div>
+                <div class="section-title" id="fortuneScoreTitle">今日运势评分</div>
                 <div class="score-grid" id="scoreGrid"></div>
             </div>
             
             <!-- 黄历宜忌 -->
             <div class="result-card">
-                <div class="section-title">黄历宜忌</div>
+                <div class="section-title" id="almanacTitle">黄历宜忌</div>
                 
                 <div class="yiji-box">
                     <div class="yi-area">
-                        <h4>宜</h4>
+                        <h4 id="yiTitle">宜</h4>
                         <div class="yiji-tags" id="yiTags"></div>
                     </div>
                     
                     <div class="ji-area">
-                        <h4>忌</h4>
+                        <h4 id="jiTitle">忌</h4>
                         <div class="yiji-tags" id="jiTags"></div>
                     </div>
                 </div>
             </div>
             
-            <!-- 额外运势 -->
+            <!-- 更多运势 -->
             <div class="result-card">
-                <div class="section-title">更多运势</div>
+                <div class="section-title" id="moreFortuneTitle">更多运势</div>
                 
                 <div class="extra-fortune">
                     <div class="extra-card">
-                        <h4>生肖运势</h4>
+                        <h4 id="shengxiaoTitle">生肖运势</h4>
                         <div class="extra-content" id="shengxiaoFortune"></div>
                     </div>
                     
                     <div class="extra-card">
-                        <h4>星座运势</h4>
+                        <h4 id="xingzuoTitle">星座运势</h4>
                         <div class="extra-content" id="xingzuoFortune"></div>
                     </div>
                     
                     <div class="extra-card">
-                        <h4>五行分析</h4>
+                        <h4 id="wuxingTitle">五行分析</h4>
                         <div class="extra-content" id="wuxingAnalysis"></div>
                     </div>
                     
                     <div class="extra-card">
-                        <h4>大运简批</h4>
+                        <h4 id="dayunTitle">大运简批</h4>
                         <div class="extra-content" id="dayunSimple"></div>
                     </div>
                 </div>
             </div>
             
+            <!-- 算命方式选择 -->
+            <div class="result-card" id="divinationSection">
+                <div class="section-title">🔮 针对今日运势，选择算命方式</div>
+                
+                <p style="color: #a0a0a0; margin-bottom: 15px;">
+                    基于你今日的综合运势<span id="overallScoreDisplay" style="color: #d4af37; font-weight: bold;"></span>，
+                    请选择以下方式测算具体事情：
+                </p>
+                
+                <div class="divination-tabs">
+                    <div class="divination-tab active" onclick="switchDivination('tarot')">🔮 塔罗牌</div>
+                    <div class="divination-tab" onclick="switchDivination('chouqian')">🎋 观音灵签</div>
+                    <div class="divination-tab" onclick="switchDivination('zhouyi')">☯️ 周易起卦</div>
+                    <div class="divination-tab" onclick="switchDivination('xingzuo')">⭐ 星盘占卜</div>
+                </div>
+                
+                <!-- 塔罗牌区域 -->
+                <div id="tarotDivination">
+                    <div class="form-group">
+                        <label>你想问什么问题？</label>
+                        <input type="text" id="tarotQuestion" placeholder="如：今天适合表白吗？这份工作要不要接受？">
+                    </div>
+                    
+                    <div style="text-align: center; margin: 20px 0;">
+                        <button onclick="drawTarot()" style="width: auto; padding: 15px 40px;">抽取塔罗牌</button>
+                    </div>
+                    
+                    <div id="tarotResult" style="display: none;">
+                        <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin: 20px 0;" id="tarotCardsContainer"></div>
+                        <div id="tarotReading"></div>
+                    </div>
+                </div>
+                
+                <!-- 观音灵签区域 -->
+                <div id="chouqianDivination" style="display: none;">
+                    <div class="chouqian-container">
+                        <p style="color: #a0a0a0; margin-bottom: 20px;">诚心默念所求之事，然后点击抽签</p>
+                        
+                        <button onclick="drawQian()" style="width: auto; padding: 15px 50px;">🎋 抽签</button>
+                        
+                        <div class="qian-container" id="qianResult">
+                            <div class="qian-number" id="qianNumber"></div>
+                            <div style="font-size: 1.3em; color: #d4af37; margin: 10px 0;" id="qianTitle"></div>
+                            <div style="font-style: italic; color: #f4e5c2; margin: 15px 0; line-height: 1.8;" id="qianPoem"></div>
+                            <div style="color: #a0a0a0; line-height: 1.7;" id="qianMeaning"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 周易起卦区域 -->
+                <div id="zhouyiDivination" style="display: none;">
+                    <div style="text-align: center; padding: 30px;">
+                        <p style="color: #a0a0a0; margin-bottom: 20px;">心中默念所问之事，点击起卦</p>
+                        
+                        <button onclick="drawZhouyi()" style="width: auto; padding: 15px 50px;">☯️ 起卦</button>
+                        
+                        <div id="zhouyiResult" style="display: none; margin-top: 20px; padding: 20px; background: rgba(212,175,55,0.1); border-radius: 12px; border: 1px solid rgba(212,175,55,0.3);">
+                            <div style="font-size: 1.5em; color: #d4af37; font-weight: bold; margin-bottom: 10px;" id="guaName"></div>
+                            <div style="font-size: 1.2em; color: #f4e5c2; margin: 15px 0;" id="guaText"></div>
+                            <div style="color: #a0a0a0; line-height: 1.8; text-align: left;" id="guaMeaning"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 星盘占卜区域 -->
+                <div id="xingzuoDivination" style="display: none;">
+                    <div style="text-align: center; padding: 30px;">
+                        <p style="color: #a0a0a0; margin-bottom: 20px;">基于你的出生星盘和今日星象</p>
+                        
+                        <button onclick="drawXingpan()" style="width: auto; padding: 15px 50px;">⭐ 查看星盘指引</button>
+                        
+                        <div id="xingpanResult" style="display: none; margin-top: 20px;">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;" id="xingpanGrid"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 逆天改命 -->
+            <div class="change-fate-section" id="changeFateSection">
+                <h3>🔥 要不要逆天改命？</h3>
+                <p style="color: #a0a0a0;">运势不佳？选择以下方式转运：</p>
+                
+                <div class="fate-options">
+                    <div class="fate-option" onclick="selectFate('fuzhou')">
+                        <div class="fate-icon">📜</div>
+                        <div class="fate-name">请符咒</div>
+                        <div style="font-size: 0.85em; color: #888;">道教灵符</div>
+                    </div>
+                    
+                    <div class="fate-option" onclick="selectFate('buddha')">
+                        <div class="fate-icon">🙏</div>
+                        <div class="fate-name">请佛像</div>
+                        <div style="font-size: 0.85em; color: #888;">观音菩萨</div>
+                    </div>
+                    
+                    <div class="fate-option" onclick="selectFate('jesus')">
+                        <div class="fate-icon">✝️</div>
+                        <div class="fate-name">请耶稣像</div>
+                        <div style="font-size: 0.85em; color: #888;">基督保佑</div>
+                    </div>
+                    
+                    <div class="fate-option" onclick="selectFate('crystal')">
+                        <div class="fate-icon">💎</div>
+                        <div class="fate-name">请水晶</div>
+                        <div style="font-size: 0.85em; color: #888;">能量石</div>
+                    </div>
+                </div>
+                
+                <div class="fate-result" id="fateResult"></div>
+            </div>
+            
         </div>
         
         <div class="footer">
-            <p>第二阶段 · 八字黄历 v2.1 · 多语言版</p>
+            <p id="footerText">第二阶段 · 八字黄历 v2.1 · 多语言版</p>
             <p><a href="https://github.com/ssjjpp-tz/simacount" target="_blank">Powered by 潇龙霞</a></p>
         </div>
     </div>

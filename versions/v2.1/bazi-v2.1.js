@@ -1092,7 +1092,257 @@ calculateAll = function() {
         
         currentBaziData = { relation, scores };
         
-        // 显示塔罗牌区域
-        document.getElementById('tarotSection').style.display = 'block';
+        // 显示综合运势分数
+        document.getElementById('overallScoreDisplay').textContent = `(${scores.overall}分)`;
     }
 };
+
+// ==================== 算命方式切换 ====================
+function switchDivination(type) {
+    // 切换标签样式
+    document.querySelectorAll('.divination-tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    event.target.classList.add('active');
+    
+    // 隐藏所有算命区域
+    document.getElementById('tarotDivination').style.display = 'none';
+    document.getElementById('chouqianDivination').style.display = 'none';
+    document.getElementById('zhouyiDivination').style.display = 'none';
+    document.getElementById('xingzuoDivination').style.display = 'none';
+    
+    // 显示选中的区域
+    document.getElementById(type + 'Divination').style.display = 'block';
+}
+
+// ==================== 观音灵签数据 ====================
+const GUANYIN_QIAN = [
+    { number: 1, title: '钟离成道', poem: '开天辟地作良缘，吉日良时万物全；若得此签非小可，人行忠正帝王宣。', meaning: '这是一支上签，表示万事如意，只要心存正念，必得贵人相助，事业有成。' },
+    { number: 2, title: '苏秦不第', poem: '鲸鱼未化守江湖，未许升腾离碧波；异日峥嵘身变态，从教一跃禹门过。', meaning: '目前时机未到，宜守不宜攻，待时机成熟必能飞黄腾达。' },
+    { number: 3, title: '董永卖身', poem: '临风冒雨去还乡，正是其身似燕儿；衔得泥来欲作垒，到头垒坏复须泥。', meaning: '先难后易，虽然目前辛苦，但最终会有好结果，需坚持不懈。' },
+    { number: 4, title: '玉莲会十朋', poem: '菱花镜破复重圆，女再求夫男再婚；自此门闾重改换，更添福禄在儿孙。', meaning: '破镜重圆之象，失而复得，关系可以修复，婚姻美满。' },
+    { number: 5, title: '刘晨遇仙', poem: '一锥草地要求泉，努力求之得最难；无意俄然遇知己，相逢携手上青天。', meaning: '有心栽花花不开，无心插柳柳成荫，顺其自然反而有所得。' },
+    { number: 6, title: '仁贵遇主', poem: '投身岩下铜鸟居，须是还他大丈夫；取得营谋谁可及，翱翔直上九霄虚。', meaning: '贵人相助，时机已到，可以大展宏图，一飞冲天。' },
+    { number: 7, title: '苏娘走难', poem: '奔波役役重重险，水远山遥客里艰；若问前程归缩地，争知缩地有神仙。', meaning: '目前困难重重，但坚持下去必有转机，贵人会在关键时刻出现。' },
+    { number: 8, title: '斐度还带', poem: '茂林松柏正兴旺，雨雪风霜总莫为；异日忽然成大用，功名成就栋梁材。', meaning: '先苦后甜，目前虽然默默无闻，但日后必成大器，成为栋梁之才。' },
+    { number: 9, title: '孔明点将', poem: '烦君勿作私心事，此意偏宜说问公；一片明心光皎洁，宛如皎月正当中。', meaning: '光明正大，问心无愧，事情会如明月当空般清晰明朗。' },
+    { number: 10, title: '庞涓观阵', poem: '石藏无价玉和珍，只管他乡外客寻；宛如持灯更觅火，不如收拾枉劳心。', meaning: '何必舍近求远，其实所求之物就在身边，应珍惜眼前。' }
+];
+
+function drawQian() {
+    const resultDiv = document.getElementById('qianResult');
+    const numberDiv = document.getElementById('qianNumber');
+    const titleDiv = document.getElementById('qianTitle');
+    const poemDiv = document.getElementById('qianPoem');
+    const meaningDiv = document.getElementById('qianMeaning');
+    
+    // 随机抽取一签
+    const qian = GUANYIN_QIAN[Math.floor(Math.random() * GUANYIN_QIAN.length)];
+    
+    // 显示结果
+    numberDiv.textContent = `第${qian.number}签`;
+    titleDiv.textContent = qian.title;
+    poemDiv.textContent = qian.poem;
+    meaningDiv.textContent = qian.meaning;
+    
+    // 结合八字给出额外建议
+    if (currentBaziData) {
+        const extraAdvice = getQianBaziAdvice(qian.number, currentBaziData);
+        meaningDiv.innerHTML += `<br><br><strong style="color: #d4af37;">结合八字：</strong>${extraAdvice}`;
+    }
+    
+    resultDiv.style.display = 'block';
+    resultDiv.scrollIntoView({ behavior: 'smooth' });
+}
+
+function getQianBaziAdvice(qianNumber, baziData) {
+    const { relation, scores } = baziData;
+    
+    if (qianNumber <= 3 && scores.overall >= 80) {
+        return '签文吉利，加上你今日运势正旺，此事可成，宜积极行动。';
+    } else if (qianNumber <= 3 && scores.overall < 60) {
+        return '签文虽好，但你今日运势一般，建议先做好准备工作，待时机更佳时再行动。';
+    } else if (qianNumber >= 8 && scores.overall >= 80) {
+        return '签文暗示先难后易，但你今日运势不错，困难会很快过去，终能成功。';
+    } else if (qianNumber >= 8 && scores.overall < 60) {
+        return '签文提示需要耐心等待，加上今日运势平平，建议暂缓行动，积蓄力量。';
+    } else {
+        return '签文显示中庸之道，配合今日运势，稳扎稳打，顺其自然即可。';
+    }
+}
+
+// ==================== 周易起卦 ====================
+const ZHOUYI_GUA = [
+    { name: '乾为天', text: '元亨利贞。', meaning: '大吉之象，事业可成，宜积极进取，但需保持正道。' },
+    { name: '坤为地', text: '元亨，利牝马之贞。', meaning: '顺应天时，厚德载物，宜守成不宜冒进，以柔克刚。' },
+    { name: '水雷屯', text: '元亨利贞，勿用有攸往，利建侯。', meaning: '万事开头难，宜稳扎稳打，建立基础，不宜急于求成。' },
+    { name: '山水蒙', text: '亨。匪我求童蒙，童蒙求我。', meaning: '启蒙学习之时，宜虚心求教，不可自以为是。' },
+    { name: '水天需', text: '有孚，光亨，贞吉。利涉大川。', meaning: '等待时机，有诚信则光明亨通，可以涉险过关。' },
+    { name: '天水讼', text: '有孚，窒惕，中吉，终凶。', meaning: '争议之事，虽有诚信但终有凶险，宜和解不宜争讼。' },
+    { name: '地水师', text: '贞，丈人吉，无咎。', meaning: '行军用师之象，需有老将风范，守正则吉。' },
+    { name: '水地比', text: '吉。原筮元永贞，无咎。', meaning: '亲比和睦，得人相助，大吉之象。' }
+];
+
+function drawZhouyi() {
+    const resultDiv = document.getElementById('zhouyiResult');
+    const nameDiv = document.getElementById('guaName');
+    const textDiv = document.getElementById('guaText');
+    const meaningDiv = document.getElementById('guaMeaning');
+    
+    // 随机起卦
+    const gua = ZHOUYI_GUA[Math.floor(Math.random() * ZHOUYI_GUA.length)];
+    
+    nameDiv.textContent = gua.name;
+    textDiv.textContent = gua.text;
+    meaningDiv.textContent = gua.meaning;
+    
+    // 结合八字
+    if (currentBaziData) {
+        const extra = getZhouyiBaziAdvice(gua.name, currentBaziData);
+        meaningDiv.innerHTML += `<br><br><strong style="color: #d4af37;">结合八字：</strong>${extra}`;
+    }
+    
+    resultDiv.style.display = 'block';
+    resultDiv.scrollIntoView({ behavior: 'smooth' });
+}
+
+function getZhouyiBaziAdvice(guaName, baziData) {
+    const { relation } = baziData;
+    
+    const adviceMap = {
+        '乾为天': '乾卦代表天行健，配合你今日' + relation + '的运势，宜自强不息，勇往直前。',
+        '坤为地': '坤卦代表地势坤，配合' + relation + '之势，宜厚德载物，以柔克刚。',
+        '水雷屯': '屯卦显示创业艰难，' + relation + '之日更需谨慎，打好基础。',
+        '水天需': '需卦主等待，' + relation + '之时宜耐心等待，时机成熟自然亨通。',
+        '地水师': '师卦主行动，' + relation + '之日如有计划，可果断执行。'
+    };
+    
+    return adviceMap[guaName] || '此卦配合你今日' + relation + '的运势，宜顺其自然，见机行事。';
+}
+
+// ==================== 星盘占卜 ====================
+function drawXingpan() {
+    const resultDiv = document.getElementById('xingpanResult');
+    const grid = document.getElementById('xingpanGrid');
+    
+    const planets = [
+        { name: '太阳', meaning: '代表意志力和自我，今日太阳位置显示你的核心目标清晰。' },
+        { name: '月亮', meaning: '代表情感和直觉，月亮相位提示关注内心感受。' },
+        { name: '水星', meaning: '代表思维和沟通，适合学习交流和表达想法。' },
+        { name: '金星', meaning: '代表爱情和美，金星位置利于感情发展和艺术创作。' },
+        { name: '火星', meaning: '代表行动力和斗志，火星能量助你有勇气面对挑战。' },
+        { name: '木星', meaning: '代表幸运和扩张，木星带来好运和成长机会。' }
+    ];
+    
+    // 随机选择3个行星
+    const selected = [];
+    while (selected.length < 3) {
+        const p = planets[Math.floor(Math.random() * planets.length)];
+        if (!selected.includes(p)) selected.push(p);
+    }
+    
+    grid.innerHTML = selected.map(p => `
+        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; border-left: 3px solid #d4af37;">
+            <div style="color: #d4af37; font-weight: bold; margin-bottom: 8px;">${p.name}</div>
+            <div style="color: #a0a0a0; font-size: 0.9em; line-height: 1.6;">${p.meaning}</div>
+        </div>
+    `).join('');
+    
+    // 添加综合建议
+    if (currentBaziData) {
+        grid.innerHTML += `
+            <div style="grid-column: 1 / -1; background: rgba(212,175,55,0.1); padding: 15px; border-radius: 10px; border: 1px solid rgba(212,175,55,0.3);">
+                <div style="color: #d4af37; font-weight: bold; margin-bottom: 8px;">✨ 星盘与八字综合指引</div>
+                <div style="color: #c0c0c0; line-height: 1.7;">
+                    你今日八字显示为${currentBaziData.relation}，综合运势${currentBaziData.scores.overall}分。
+                    星盘显示${selected[0].name}和${selected[1].name}能量较强，建议发挥${selected[0].name}的积极能量，
+                    同时注意${selected[2].name}提示的方面。
+                </div>
+            </div>
+        `;
+    }
+    
+    resultDiv.style.display = 'block';
+    resultDiv.scrollIntoView({ behavior: 'smooth' });
+}
+
+// ==================== 逆天改命 ====================
+const FATE_ITEMS = {
+    fuzhou: {
+        name: '道教灵符',
+        icon: '📜',
+        content: `
+            <h4>📜 请太岁符一道</h4>
+            <p style="line-height: 1.8; color: #c0c0c0;">
+                太岁符可化解流年不利，保平安顺遂。建议：<br>
+                1. 将符咒置于钱包或随身携带<br>
+                2. 心诚则灵，每日默念心愿<br>
+                3. 行善积德，符咒效力倍增<br>
+                4. 年底需送神还愿
+            </p>
+            <div style="margin-top: 15px; padding: 10px; background: rgba(0,255,0,0.1); border-radius: 8px;">
+                <strong style="color: #90ee90;">改命效果：</strong>可提升运势10-15%
+            </div>
+        `
+    },
+    buddha: {
+        name: '观音菩萨',
+        icon: '🙏',
+        content: `
+            <h4>🙏 请观音菩萨像</h4>
+            <p style="line-height: 1.8; color: #c0c0c0;">
+                观音菩萨大慈大悲，有求必应。建议：<br>
+                1. 每日早晚礼拜，念诵"南无观世音菩萨"<br>
+                2. 心怀慈悲，多行善事<br>
+                3. 逢初一十五供灯上香<br>
+                4. 可佩戴观音护身符
+            </p>
+            <div style="margin-top: 15px; padding: 10px; background: rgba(0,255,0,0.1); border-radius: 8px;">
+                <strong style="color: #90ee90;">改命效果：</strong>可逢凶化吉，遇难呈祥
+            </div>
+        `
+    },
+    jesus: {
+        name: '耶稣基督',
+        icon: '✝️',
+        content: `
+            <h4>✝️ 请耶稣像</h4>
+            <p style="line-height: 1.8; color: #c0c0c0;">
+                主耶稣是道路、真理、生命。建议：<br>
+                1. 每日祈祷，将心事交托给主<br>
+                2. 阅读圣经，寻求指引<br>
+                3. 参加教会活动，与弟兄姐妹交通<br>
+                4. 践行爱人如己的教导
+            </p>
+            <div style="margin-top: 15px; padding: 10px; background: rgba(0,255,0,0.1); border-radius: 8px;">
+                <strong style="color: #90ee90;">改命效果：</strong>心灵平安，蒙主赐福
+            </div>
+        `
+    },
+    crystal: {
+        name: '转运水晶',
+        icon: '💎',
+        content: `
+            <h4>💎 请转运水晶</h4>
+            <p style="line-height: 1.8; color: #c0c0c0;">
+                根据你的八字五行，推荐以下水晶：<br>
+                1. ${currentBaziData && currentBaziData.scores ? '黄水晶 - 招财进宝' : '紫水晶 - 提升智慧'}<br>
+                2. 黑曜石 - 辟邪化煞<br>
+                3. 粉水晶 - 招桃花<br>
+                4. 白水晶 - 净化磁场
+            </p>
+            <div style="margin-top: 15px; padding: 10px; background: rgba(0,255,0,0.1); border-radius: 8px;">
+                <strong style="color: #90ee90;">改命效果：</strong>改善磁场，提升个人能量
+            </div>
+        `
+    }
+};
+
+function selectFate(type) {
+    const resultDiv = document.getElementById('fateResult');
+    const item = FATE_ITEMS[type];
+    
+    resultDiv.innerHTML = item.content;
+    resultDiv.style.display = 'block';
+    resultDiv.scrollIntoView({ behavior: 'smooth' });
+}
