@@ -5,12 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>潇龙霞八字黄历 - 版本选择</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Noto Serif SC', 'SimSun', serif;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
@@ -18,17 +13,8 @@
             color: #e4e4e4;
             padding: 40px 20px;
         }
-        
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        header {
-            text-align: center;
-            padding: 40px 0;
-        }
-        
+        .container { max-width: 800px; margin: 0 auto; }
+        header { text-align: center; padding: 40px 0; }
         h1 {
             font-size: 2.5em;
             background: linear-gradient(45deg, #d4af37, #f4e5c2, #d4af37);
@@ -36,18 +22,8 @@
             -webkit-text-fill-color: transparent;
             margin-bottom: 10px;
         }
-        
-        .subtitle {
-            color: #a0a0a0;
-            font-size: 1.1em;
-        }
-        
-        .version-grid {
-            display: grid;
-            gap: 25px;
-            margin-top: 40px;
-        }
-        
+        .subtitle { color: #a0a0a0; font-size: 1.1em; }
+        .version-grid { display: grid; gap: 25px; margin-top: 40px; }
         .version-card {
             background: rgba(255,255,255,0.05);
             border-radius: 16px;
@@ -59,69 +35,35 @@
             color: inherit;
             display: block;
         }
-        
         .version-card:hover {
             transform: translateY(-5px);
             border-color: rgba(212,175,55,0.5);
             box-shadow: 0 10px 30px rgba(212,175,55,0.2);
         }
-        
         .version-card.current {
             border-color: #d4af37;
             background: linear-gradient(135deg, rgba(212,175,55,0.1), rgba(212,175,55,0.05));
         }
-        
         .version-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 15px;
         }
-        
-        .version-number {
-            font-size: 1.8em;
-            font-weight: bold;
-            color: #d4af37;
-        }
-        
+        .version-number { font-size: 1.8em; font-weight: bold; color: #d4af37; }
         .version-badge {
             padding: 5px 15px;
             border-radius: 20px;
             font-size: 0.85em;
             font-weight: bold;
         }
-        
-        .badge-stable {
-            background: rgba(0,255,0,0.2);
-            color: #90ee90;
-        }
-        
-        .badge-legacy {
-            background: rgba(128,128,128,0.2);
-            color: #a0a0a0;
-        }
-        
-        .version-date {
-            color: #888;
-            font-size: 0.9em;
-            margin-bottom: 15px;
-        }
-        
-        .version-desc {
-            line-height: 1.8;
-            color: #c0c0c0;
-        }
-        
-        .feature-list {
-            margin-top: 15px;
-            padding-left: 20px;
-        }
-        
-        .feature-list li {
-            margin-bottom: 8px;
-            color: #a0a0a0;
-        }
-        
+        .badge-latest { background: rgba(0,255,0,0.2); color: #90ee90; }
+        .badge-stable { background: rgba(212,175,55,0.3); color: #f4e5c2; }
+        .badge-legacy { background: rgba(128,128,128,0.2); color: #a0a0a0; }
+        .version-date { color: #888; font-size: 0.9em; margin-bottom: 15px; }
+        .version-desc { line-height: 1.8; color: #c0c0c0; }
+        .feature-list { margin-top: 15px; padding-left: 20px; }
+        .feature-list li { margin-bottom: 8px; color: #a0a0a0; }
         .enter-btn {
             display: inline-block;
             margin-top: 20px;
@@ -131,49 +73,8 @@
             color: #1a1a2e;
             font-weight: bold;
             text-decoration: none;
-            transition: all 0.3s;
         }
-        
-        .enter-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(212,175,55,0.4);
-        }
-        
-        .footer {
-            text-align: center;
-            padding: 60px 20px 20px;
-            color: #666;
-            font-size: 0.9em;
-        }
-        
-        .update-log {
-            background: rgba(0,0,0,0.2);
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: 20px;
-        }
-        
-        .update-log h3 {
-            color: #d4af37;
-            margin-bottom: 15px;
-            font-size: 1em;
-        }
-        
-        .changelog {
-            max-height: 150px;
-            overflow-y: auto;
-        }
-        
-        .changelog-item {
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            font-size: 0.9em;
-            color: #a0a0a0;
-        }
-        
-        .changelog-item:last-child {
-            border-bottom: none;
-        }
+        .footer { text-align: center; padding: 60px 20px 20px; color: #666; font-size: 0.9em; }
     </style>
 </head>
 <body>
@@ -185,11 +86,35 @@
         
         <div class="version-grid">
             
-            <!-- v2.0 当前版本 -->
-            <a href="versions/v2.0/index.html" class="version-card current">
+            <!-- v2.1 最新版本 -->
+            <a href="versions/v2.1/index.html" class="version-card current">
+                <div class="version-header">
+                    <span class="version-number">v2.1</span>
+                    <span class="version-badge badge-latest">最新版本</span>
+                </div>
+                <div class="version-date">2026-03-03 发布</div>
+                <div class="version-desc">
+                    <strong>详细解读 + 多语言 + 更多运势</strong><br>
+                    大幅增加了详细解读内容，支持中英阿三种语言
+                </div>
+                <ul class="feature-list">
+                    <li>✨ 详细解读（事业、财运、感情、健康大段描述）</li>
+                    <li>🌍 多语言支持（中文、English、العربية）</li>
+                    <li>🐲 生肖运势</li>
+                    <li>⭐ 星座运势</li>
+                    <li>☯️ 五行分析</li>
+                    <li>🎯 大运简批</li>
+                    <li>📊 可视化运势评分</li>
+                    <li>八字命盘、黄历宜忌</li>
+                </ul>
+                <span class="enter-btn">进入 v2.1 →</span>
+            </a>
+            
+            <!-- v2.0 -->
+            <a href="versions/v2.0/index.html" class="version-card">
                 <div class="version-header">
                     <span class="version-number">v2.0</span>
-                    <span class="version-badge badge-stable">当前版本</span>
+                    <span class="version-badge badge-stable">稳定版</span>
                 </div>
                 <div class="version-date">2026-03-03 发布</div>
                 <div class="version-desc">
@@ -207,7 +132,7 @@
                 <span class="enter-btn">进入 v2.0 →</span>
             </a>
             
-            <!-- v1.0 历史版本 -->
+            <!-- v1.0 -->
             <a href="versions/v1.0/index.html" class="version-card">
                 <div class="version-header">
                     <span class="version-number">v1.0</span>

@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>潇龙霞八字黄历 v2.1</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Noto Serif SC', 'SimSun', serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e4e4e4;
+            padding: 20px;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        header { text-align: center; padding: 30px 0; }
+        h1 {
+            font-size: 2.2em;
+            background: linear-gradient(45deg, #d4af37, #f4e5c2, #d4af37);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .subtitle { color: #a0a0a0; font-size: 1em; }
+        
+        /* 语言选择器 */
+        .lang-selector {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        .lang-selector select {
+            padding: 8px 15px;
+            background: rgba(212,175,55,0.2);
+            border: 1px solid rgba(212,175,55,0.5);
+            border-radius: 20px;
+            color: #d4af37;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .input-section {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(212,175,55,0.2);
+        }
+        .section-title {
+            color: #d4af37;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(212,175,55,0.3);
+        }
+        .form-group { margin-bottom: 15px; }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: #d4af37;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid rgba(212,175,55,0.3);
+            border-radius: 8px;
+            background: rgba(0,0,0,0.3);
+            color: #e4e4e4;
+            font-size: 15px;
+        }
+        .datetime-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+        }
+        .gender-row { display: flex; gap: 20px; }
+        .gender-option {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 8px 16px;
+            background: rgba(212,175,55,0.1);
+            border-radius: 20px;
+        }
+        .gender-option.selected {
+            background: rgba(212,175,55,0.3);
+            border: 1px solid #d4af37;
+        }
+        .gender-option input { width: auto; margin-right: 8px; }
+        
+        button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(45deg, #d4af37, #b8941d);
+            border: none;
+            border-radius: 8px;
+            color: #1a1a2e;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 25px rgba(212,175,55,0.5);
+        }
+        
+        .result-section { display: none; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .result-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(212,175,55,0.2);
+        }
+        
+        /* 八字表格 */
+        .sizhu-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .sizhu-table th {
+            background: rgba(212,175,55,0.2);
+            padding: 12px;
+            text-align: center;
+            color: #d4af37;
+        }
+        .sizhu-table td {
+            padding: 15px;
+            text-align: center;
+            border: 1px solid rgba(212,175,55,0.1);
+        }
+        .pillar { display: flex; flex-direction: column; gap: 8px; }
+        .gan, .zhi { font-size: 1.6em; font-weight: bold; }
+        .gan { color: #f4e5c2; }
+        .zhi { color: #e4e4e4; }
+        .wuxing-tag {
+            font-size: 0.8em;
+            padding: 3px 8px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        .wuxing-jin { background: rgba(255,215,0,0.3); color: #ffd700; }
+        .wuxing-mu { background: rgba(0,255,0,0.3); color: #90ee90; }
+        .wuxing-shui { background: rgba(0,191,255,0.3); color: #87ceeb; }
+        .wuxing-huo { background: rgba(255,69,0,0.3); color: #ff6347; }
+        .wuxing-tu { background: rgba(139,69,19,0.3); color: #deb887; }
+        
+        /* 详细解读区域 */
+        .detail-box {
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 4px solid #d4af37;
+        }
+        .detail-box h4 {
+            color: #d4af37;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+        }
+        .detail-content {
+            line-height: 1.9;
+            color: #d0d0d0;
+            text-align: justify;
+        }
+        
+        /* 运势评分 */
+        .score-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .score-item {
+            text-align: center;
+            padding: 15px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+        }
+        .score-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #d4af37;
+        }
+        .score-label { font-size: 0.9em; color: #a0a0a0; margin-top: 5px; }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        
+        /* 宜忌 */
+        .yiji-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .yi-area, .ji-area {
+            padding: 20px;
+            border-radius: 12px;
+        }
+        .yi-area {
+            background: linear-gradient(135deg, rgba(0,255,0,0.1), rgba(0,255,0,0.05));
+            border: 1px solid rgba(0,255,0,0.3);
+        }
+        .ji-area {
+            background: linear-gradient(135deg, rgba(255,0,0,0.1), rgba(255,0,0,0.05));
+            border: 1px solid rgba(255,0,0,0.3);
+        }
+        .yi-area h4 { color: #90ee90; margin-bottom: 10px; }
+        .ji-area h4 { color: #ff6b6b; margin-bottom: 10px; }
+        .yiji-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .yiji-tag {
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.9em;
+        }
+        .yi-area .yiji-tag { background: rgba(0,255,0,0.15); color: #90ee90; }
+        .ji-area .yiji-tag { background: rgba(255,0,0,0.15); color: #ff9999; }
+        
+        /* 生肖星座 */
+        .extra-fortune {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .extra-card {
+            background: rgba(0,0,0,0.2);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 3px solid #d4af37;
+        }
+        .extra-card h4 { color: #d4af37; margin-bottom: 10px; }
+        .extra-content { color: #b0b0b0; line-height: 1.7; }
+        
+        .footer {
+            text-align: center;
+            padding: 40px 20px 20px;
+            color: #666;
+            font-size: 0.9em;
+        }
+        .footer a { color: #d4af37; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 语言选择 -->
+        <div class="lang-selector">
+            <select id="langSelect" onchange="changeLanguage()">
+                <option value="zh">中文</option>
+                <option value="en">English</option>
+                <option value="ar">العربية</option>
+            </select>
+        </div>
+        
+        <header>
+            <h1 id="pageTitle">潇龙霞八字黄历 v2.1</h1>
+            <p class="subtitle" id="pageSubtitle">八字命理 · 详细解读 · 多语言支持</p>
+        </header>
+        
+        <!-- 出生信息 -->
+        <div class="input-section">
+            <div class="section-title" id="birthInfoTitle">出生信息</div>
+            
+            <div class="form-group">
+                <label id="birthDateLabel">出生日期（阳历）</label>
+                <div class="datetime-row">
+                    <select id="birthYear"><option value="">年</option></select>
+                    <select id="birthMonth"><option value="">月</option></select>
+                    <select id="birthDay"><option value="">日</option></select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label id="birthTimeLabel">出生时间</label>
+                <div class="datetime-row">
+                    <select id="birthHour"><option value="">时</option></select>
+                    <select id="birthMinute"><option value="0">分</option></select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label id="genderLabel">性别</label>
+                <div class="gender-row">
+                    <label class="gender-option selected">
+                        <input type="radio" name="gender" value="male" checked>
+                        <span id="maleText">男</span>
+                    </label>
+                    <label class="gender-option">
+                        <input type="radio" name="gender" value="female">
+                        <span id="femaleText">女</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 测算日期 -->
+        <div class="input-section">
+            <div class="section-title" id="targetDateTitle">测算日期</div>
+            
+            <div class="form-group">
+                <label id="targetDateLabel">要测算的日期</label>
+                <div class="datetime-row">
+                    <select id="targetYear"><option value="">年</option></select>
+                    <select id="targetMonth"><option value="">月</option></select>
+                    <select id="targetDay"><option value="">日</option></select>
+                </div>
+            </div>
+        </div>
+        
+        <button onclick="calculateAll()" id="calcBtn">开始测算</button>
+        
+        <!-- 结果区域 -->
+        <div class="result-section" id="result">
+            
+            <!-- 八字命盘 -->
+            <div class="result-card">
+                <div class="section-title">八字命盘</div>
+                <table class="sizhu-table">
+                    <tr>
+                        <th>年柱</th>
+                        <th>月柱</th>
+                        <th>日柱</th>
+                        <th>时柱</th>
+                    </tr>
+                    <tr id="sizhuRow"></tr>
+                </table>
+            </div>
+            
+            <!-- 详细解读 -->
+            <div class="result-card">
+                <div class="section-title">详细解读</div>
+                
+                <div class="detail-box">
+                    <h4 id="readingTitle">日主关系分析</h4>
+                    <div class="detail-content" id="readingContent"></div>
+                </div>
+                
+                <div class="detail-box">
+                    <h4>事业运势详解</h4>
+                    <div class="detail-content" id="careerDetail"></div>
+                </div>
+                
+                <div class="detail-box">
+                    <h4>财运详解</h4>
+                    <div class="detail-content" id="wealthDetail"></div>
+                </div>
+                
+                <div class="detail-box">
+                    <h4>感情运势详解</h4>
+                    <div class="detail-content" id="loveDetail"></div>
+                </div>
+                
+                <div class="detail-box">
+                    <h4>健康提示</h4>
+                    <div class="detail-content" id="healthDetail"></div>
+                </div>
+            </div>
+            
+            <!-- 运势评分 -->
+            <div class="result-card">
+                <div class="section-title">今日运势评分</div>
+                <div class="score-grid" id="scoreGrid"></div>
+            </div>
+            
+            <!-- 黄历宜忌 -->
+            <div class="result-card">
+                <div class="section-title">黄历宜忌</div>
+                
+                <div class="yiji-box">
+                    <div class="yi-area">
+                        <h4>宜</h4>
+                        <div class="yiji-tags" id="yiTags"></div>
+                    </div>
+                    
+                    <div class="ji-area">
+                        <h4>忌</h4>
+                        <div class="yiji-tags" id="jiTags"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 额外运势 -->
+            <div class="result-card">
+                <div class="section-title">更多运势</div>
+                
+                <div class="extra-fortune">
+                    <div class="extra-card">
+                        <h4>生肖运势</h4>
+                        <div class="extra-content" id="shengxiaoFortune"></div>
+                    </div>
+                    
+                    <div class="extra-card">
+                        <h4>星座运势</h4>
+                        <div class="extra-content" id="xingzuoFortune"></div>
+                    </div>
+                    
+                    <div class="extra-card">
+                        <h4>五行分析</h4>
+                        <div class="extra-content" id="wuxingAnalysis"></div>
+                    </div>
+                    
+                    <div class="extra-card">
+                        <h4>大运简批</h4>
+                        <div class="extra-content" id="dayunSimple"></div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        
+        <div class="footer">
+            <p>第二阶段 · 八字黄历 v2.1 · 多语言版</p>
+            <p><a href="https://github.com/ssjjpp-tz/simacount" target="_blank">Powered by 潇龙霞</a></p>
+        </div>
+    </div>
+    
+    <script src="bazi-v2.1.js"></script>
+</body>
+</html>
