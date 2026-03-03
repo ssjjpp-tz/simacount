@@ -390,10 +390,19 @@ function updatePageText() {
 // ==================== 初始化 ====================
 function init() {
     const now = new Date();
-    initDateSelect('birthYear', 'birthMonth', 'birthDay', 1900, 2100, now.getFullYear(), now.getMonth() + 1, now.getDate());
-    initTimeSelect('birthHour');
-    initDateSelect('targetYear', 'targetMonth', 'targetDay', 1900, 2100, now.getFullYear(), now.getMonth() + 1, now.getDate());
     
+    // 填充年份选择器 (1900-2100)
+    fillYearOptions('birthYear', now.getFullYear());
+    fillYearOptions('targetYear', now.getFullYear());
+    
+    // 填充小时选择器 (0-23)
+    fillHourOptions('birthHour', now.getHours());
+    
+    // 初始化日期选择器
+    initDateSelect('birthYear', 'birthMonth', 'birthDay', now.getFullYear(), now.getMonth() + 1, now.getDate());
+    initDateSelect('targetYear', 'targetMonth', 'targetDay', now.getFullYear(), now.getMonth() + 1, now.getDate());
+    
+    // 性别选择
     document.querySelectorAll('.gender-option').forEach(opt => {
         opt.addEventListener('click', function() {
             document.querySelectorAll('.gender-option').forEach(o => o.classList.remove('selected'));
@@ -403,83 +412,66 @@ function init() {
     });
 }
 
-function initDateSelect(yearId, monthId, dayId, startYear, endYear, defaultYear, defaultMonth, defaultDay) {
+// 填充年份选项
+function fillYearOptions(yearId, defaultYear) {
+    const yearSelect = document.getElementById(yearId);
+    if (!yearSelect) return;
+    
+    let options = '<option value="">年</option>';
+    for (let y = 1900; y <= 2100; y++) {
+        options += `<option value="${y}"${y === defaultYear ? ' selected' : ''}>${y}</option>`;
+    }
+    yearSelect.innerHTML = options;
+}
+
+// 填充小时选项
+function fillHourOptions(hourId, defaultHour) {
+    const hourSelect = document.getElementById(hourId);
+    if (!hourSelect) return;
+    
+    let options = '<option value="">时</option>';
+    for (let h = 0; h <= 23; h++) {
+        options += `<option value="${h}"${h === defaultHour ? ' selected' : ''}>${h}时</option>`;
+    }
+    hourSelect.innerHTML = options;
+}
+
+function initDateSelect(yearId, monthId, dayId, defaultYear, defaultMonth, defaultDay) {
     const yearSelect = document.getElementById(yearId);
     const monthSelect = document.getElementById(monthId);
     const daySelect = document.getElementById(dayId);
-
+    
     if (!yearSelect || !monthSelect || !daySelect) {
         console.error('Date select elements not found:', yearId, monthId, dayId);
         return;
     }
-
-    // 添加年份选项 - 使用传统 DOM 方法确保兼容性
-    yearSelect.innerHTML = '';
-    const yearDefaultOpt = document.createElement('option');
-    yearDefaultOpt.value = '';
-    yearDefaultOpt.textContent = '年';
-    yearSelect.appendChild(yearDefaultOpt);
-
-    for (let y = startYear; y <= endYear; y++) {
-        const opt = document.createElement('option');
-        opt.value = y;
-        opt.textContent = y;
-        if (y === defaultYear) opt.selected = true;
-        yearSelect.appendChild(opt);
-    }
-
-    // 设置月份默认值
-    if (defaultMonth) {
-        monthSelect.value = defaultMonth;
-    }
-
+    
+    // 设置默认值
+    if (defaultYear) yearSelect.value = defaultYear;
+    if (defaultMonth) monthSelect.value = defaultMonth;
+    
     const updateDays = () => {
-        const y = parseInt(yearSelect.value) || defaultYear;
-        const m = parseInt(monthSelect.value) || defaultMonth;
+        const y = parseInt(yearSelect.value) || defaultYear || 2024;
+        const m = parseInt(monthSelect.value) || defaultMonth || 1;
         const daysInMonth = new Date(y, m, 0).getDate();
-
-        daySelect.innerHTML = '';
-        const dayDefaultOpt = document.createElement('option');
-        dayDefaultOpt.value = '';
-        dayDefaultOpt.textContent = '日';
-        daySelect.appendChild(dayDefaultOpt);
-
+        
+        let options = '<option value="">日</option>';
         for (let d = 1; d <= daysInMonth; d++) {
-            const opt = document.createElement('option');
-            opt.value = d;
-            opt.textContent = d;
-            if (d === defaultDay) opt.selected = true;
-            daySelect.appendChild(opt);
+            options += `<option value="${d}"${d === defaultDay ? ' selected' : ''}>${d}</option>`;
         }
+        daySelect.innerHTML = options;
     };
-
+    
     yearSelect.addEventListener('change', updateDays);
     monthSelect.addEventListener('change', updateDays);
     updateDays();
 }
 
-function initTimeSelect(hourId) {
-    const hourSelect = document.getElementById(hourId);
-    if (!hourSelect) {
-        console.error('Hour select element not found:', hourId);
-        return;
-    }
-    const now = new Date();
-    const currentHour = now.getHours();
-
-    hourSelect.innerHTML = '';
-    const hourDefaultOpt = document.createElement('option');
-    hourDefaultOpt.value = '';
-    hourDefaultOpt.textContent = '时';
-    hourSelect.appendChild(hourDefaultOpt);
-
-    for (let h = 0; h <= 23; h++) {
-        const opt = document.createElement('option');
-        opt.value = h;
-        opt.textContent = h + '时';
-        if (h === currentHour) opt.selected = true;
-        hourSelect.appendChild(opt);
-    }
+// 性别选择函数
+function selectGender(element, value) {
+    document.querySelectorAll('.gender-option').forEach(o => o.classList.remove('selected'));
+    element.classList.add('selected');
+    element.querySelector('input').checked = true;
 }
 
 // ==================== 八字计算 ====================
