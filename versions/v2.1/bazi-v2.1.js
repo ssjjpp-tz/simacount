@@ -32,7 +32,20 @@ const I18N = {
         shengxiao: '生肖运势',
         xingzuo: '星座运势',
         wuxing: '五行分析',
-        dayun: '大运简批'
+        dayun: '大运简批',
+        overall: '综合运势',
+        careerLabel: '事业运',
+        wealthLabel: '财运',
+        loveLabel: '感情运',
+        healthLabel: '健康运',
+        wuxingDistribution: '您的八字五行分布',
+        wuxingPartial: '五行偏',
+        dayunStart: '您',
+        dayunCycle: '岁起运，每十年一大运',
+        dayunCurrent: '当前大运阶段',
+        suitableFor: '适合',
+        avoid: '避免',
+        footer: '第二阶段 · 八字黄历 v2.1 · 多语言版'
     },
     en: {
         title: 'Master Xiao Long Xia Divine Divination',
@@ -61,7 +74,20 @@ const I18N = {
         shengxiao: 'Chinese Zodiac',
         xingzuo: 'Western Zodiac',
         wuxing: 'Five Elements',
-        dayun: 'Decade Fortune'
+        dayun: 'Decade Fortune',
+        overall: 'Overall',
+        careerLabel: 'Career',
+        wealthLabel: 'Wealth',
+        loveLabel: 'Love',
+        healthLabel: 'Health',
+        wuxingDistribution: 'Five Elements Distribution',
+        wuxingPartial: 'Dominant Element',
+        dayunStart: 'Fortune starts at age',
+        dayunCycle: 'Every 10 years',
+        dayunCurrent: 'Current phase',
+        suitableFor: 'Suitable for',
+        avoid: 'Avoid',
+        footer: 'Phase 2 · Bazi Calendar v2.1 · Multi-Language'
     },
     ar: {
         title: 'السيد شياو لونغ شيا التكهن الإلهي',
@@ -90,7 +116,20 @@ const I18N = {
         shengxiao: 'البرج الصيني',
         xingzuo: 'البرج الغربي',
         wuxing: 'العناصر الخمسة',
-        dayun: 'حظ العقد'
+        dayun: 'حظ العقد',
+        overall: 'التقييم العام',
+        careerLabel: 'المهنة',
+        wealthLabel: 'المال',
+        loveLabel: 'الحب',
+        healthLabel: 'الصحة',
+        wuxingDistribution: 'توزيع العناصر الخمسة',
+        wuxingPartial: 'العنصر المسيطر',
+        dayunStart: 'تبدأ من عمر',
+        dayunCycle: 'كل عشر سنوات',
+        dayunCurrent: 'المرحلة الحالية',
+        suitableFor: 'مناسب لـ',
+        avoid: 'تجنب',
+        footer: 'المرحلة 2 · تقويم الباجوا v2.1 · نسخة متعددة اللغات'
     }
 };
 
@@ -252,6 +291,58 @@ function updatePageText() {
     document.getElementById('femaleText').textContent = t.female;
     document.getElementById('targetDateLabel').textContent = t.targetDateLabel;
     document.getElementById('calcBtn').textContent = t.calcBtn;
+    
+    // 更新结果区域标题
+    const baziChartTitle = document.getElementById('baziChartTitle');
+    if (baziChartTitle) baziChartTitle.textContent = t.baziChart;
+    
+    const detailReadingTitle = document.getElementById('detailReadingTitle');
+    if (detailReadingTitle) detailReadingTitle.textContent = t.detailReading;
+    
+    const readingTitle = document.getElementById('readingTitle');
+    if (readingTitle) readingTitle.textContent = t.dayRelation;
+    
+    const careerTitle = document.querySelector('.detail-box:nth-child(2) h4');
+    if (careerTitle) careerTitle.textContent = t.career;
+    
+    const wealthTitle = document.querySelector('.detail-box:nth-child(3) h4');
+    if (wealthTitle) wealthTitle.textContent = t.wealth;
+    
+    const loveTitle = document.querySelector('.detail-box:nth-child(4) h4');
+    if (loveTitle) loveTitle.textContent = t.love;
+    
+    const healthTitle = document.querySelector('.detail-box:nth-child(5) h4');
+    if (healthTitle) healthTitle.textContent = t.health;
+    
+    const fortuneScoreTitle = document.getElementById('fortuneScoreTitle');
+    if (fortuneScoreTitle) fortuneScoreTitle.textContent = t.fortuneScore;
+    
+    const almanacTitle = document.getElementById('almanacTitle');
+    if (almanacTitle) almanacTitle.textContent = t.almanac;
+    
+    const yiTitle = document.getElementById('yiTitle');
+    if (yiTitle) yiTitle.textContent = t.yi;
+    
+    const jiTitle = document.getElementById('jiTitle');
+    if (jiTitle) jiTitle.textContent = t.ji;
+    
+    const moreFortuneTitle = document.getElementById('moreFortuneTitle');
+    if (moreFortuneTitle) moreFortuneTitle.textContent = t.moreFortune;
+    
+    const shengxiaoTitle = document.getElementById('shengxiaoTitle');
+    if (shengxiaoTitle) shengxiaoTitle.textContent = t.shengxiao;
+    
+    const xingzuoTitle = document.getElementById('xingzuoTitle');
+    if (xingzuoTitle) xingzuoTitle.textContent = t.xingzuo;
+    
+    const wuxingTitle = document.getElementById('wuxingTitle');
+    if (wuxingTitle) wuxingTitle.textContent = t.wuxing;
+    
+    const dayunTitle = document.getElementById('dayunTitle');
+    if (dayunTitle) dayunTitle.textContent = t.dayun;
+    
+    const footerText = document.getElementById('footerText');
+    if (footerText) footerText.textContent = t.footer;
 }
 
 // ==================== 初始化 ====================
@@ -443,10 +534,14 @@ function calculateScores(relation) {
 function displayResults(sizhu, reading, scores, birthYear, birthMonth, birthDay) {
     document.getElementById('result').style.display = 'block';
     
+    const t = I18N[currentLang];
+    
     // 显示八字
     const sizhuRow = document.getElementById('sizhuRow');
     sizhuRow.innerHTML = '';
-    const titles = ['年柱', '月柱', '日柱', '时柱'];
+    const titles = currentLang === 'zh' ? ['年柱', '月柱', '日柱', '时柱'] : 
+                   currentLang === 'en' ? ['Year', 'Month', 'Day', 'Hour'] :
+                   ['العمود السنوي', 'عمود الشهر', 'عمود اليوم', 'عمود الساعة'];
     sizhu.forEach((pillar, index) => {
         const wuxing = getWuXing(pillar.ganIndex, pillar.zhiIndex);
         const td = document.createElement('td');
@@ -476,42 +571,47 @@ function displayResults(sizhu, reading, scores, birthYear, birthMonth, birthDay)
     scoreGrid.innerHTML = `
         <div class="score-item">
             <div class="score-value">${scores.overall}</div>
-            <div class="score-label">综合运势</div>
+            <div class="score-label">${t.overall}</div>
             <div class="progress-bar"><div class="progress-fill" style="width: ${scores.overall}%; background: linear-gradient(90deg, #d4af37, #f4e5c2);"></div></div>
         </div>
         <div class="score-item">
             <div class="score-value">${scores.career}</div>
-            <div class="score-label">事业运</div>
+            <div class="score-label">${t.careerLabel}</div>
             <div class="progress-bar"><div class="progress-fill" style="width: ${scores.career}%; background: linear-gradient(90deg, #4caf50, #8bc34a);"></div></div>
         </div>
         <div class="score-item">
             <div class="score-value">${scores.wealth}</div>
-            <div class="score-label">财运</div>
+            <div class="score-label">${t.wealthLabel}</div>
             <div class="progress-bar"><div class="progress-fill" style="width: ${scores.wealth}%; background: linear-gradient(90deg, #ff9800, #ffc107);"></div></div>
         </div>
         <div class="score-item">
             <div class="score-value">${scores.love}</div>
-            <div class="score-label">感情运</div>
+            <div class="score-label">${t.loveLabel}</div>
             <div class="progress-bar"><div class="progress-fill" style="width: ${scores.love}%; background: linear-gradient(90deg, #e91e63, #f48fb1);"></div></div>
         </div>
         <div class="score-item">
             <div class="score-value">${scores.health}</div>
-            <div class="score-label">健康运</div>
+            <div class="score-label">${t.healthLabel}</div>
             <div class="progress-bar"><div class="progress-fill" style="width: ${scores.health}%; background: linear-gradient(90deg, #2196f3, #03a9f4);"></div></div>
         </div>
     `;
     
     // 显示宜忌
-    const yiList = ['出行', '会友', '签约', '求财', '祭祀', '祈福'];
-    const jiList = ['动土', '开仓', '安葬', '行丧', '伐木', '上梁'];
+    const yiList = currentLang === 'zh' ? ['出行', '会友', '签约', '求财', '祭祀', '祈福'] :
+                   currentLang === 'en' ? ['Travel', 'Social', 'Contract', 'Wealth', 'Worship', 'Pray'] :
+                   ['السفر', 'الاجتماع', 'التعاقد', 'المال', 'العبادة', 'الدعاء'];
+    const jiList = currentLang === 'zh' ? ['动土', '开仓', '安葬', '行丧', '伐木', '上梁'] :
+                   currentLang === 'en' ? ['Digging', 'Warehouse', 'Funeral', 'Mourning', 'Logging', 'Beam'] :
+                   ['الحفر', 'المستودع', 'الجنازة', 'الحداد', 'قطع الأشجار', 'العارضة'];
     document.getElementById('yiTags').innerHTML = yiList.map(yi => `<span class="yiji-tag">${yi}</span>`).join('');
     document.getElementById('jiTags').innerHTML = jiList.map(ji => `<span class="yiji-tag">${ji}</span>`).join('');
     
     // 显示生肖运势
     const shengxiao = getShengXiao(birthYear);
     const sxData = SHENGXIAO_FORTUNE[shengxiao];
+    const sxLabel = currentLang === 'zh' ? '属' : currentLang === 'en' ? 'Chinese Zodiac: ' : 'البرج الصيني: ';
     document.getElementById('shengxiaoFortune').innerHTML = `
-        <strong>属${shengxiao}</strong> - ${sxData.desc}<br><br>
+        <strong>${sxLabel}${shengxiao}</strong> - ${sxData.desc}<br><br>
         ${sxData.today}
     `;
     
@@ -527,19 +627,51 @@ function displayResults(sizhu, reading, scores, birthYear, birthMonth, birthDay)
     const wuxingCount = countWuxing(sizhu);
     const maxWuxing = Object.keys(wuxingCount).filter(k => k !== 'dayMaster').reduce((a, b) => wuxingCount[a] > wuxingCount[b] ? a : b);
     const wuxingMap = { jin: '金', mu: '木', shui: '水', huo: '火', tu: '土' };
-    document.getElementById('wuxingAnalysis').innerHTML = `
-        您的八字五行分布：<br>
-        金:${wuxingCount.jin} 木:${wuxingCount.mu} 水:${wuxingCount.shui} 火:${wuxingCount.huo} 土:${wuxingCount.tu}<br><br>
-        <strong>五行偏${wuxingMap[maxWuxing]}</strong>，${wuxingMap[maxWuxing]}旺之人${getWuxingDesc(maxWuxing)}
-    `;
+    const wuxingMapEn = { jin: 'Metal', mu: 'Wood', shui: 'Water', huo: 'Fire', tu: 'Earth' };
+    const wuxingMapAr = { jin: 'المعدن', mu: 'الخشب', shui: 'الماء', huo: 'النار', tu: 'التراب' };
+    const wuxingName = currentLang === 'zh' ? wuxingMap[maxWuxing] : currentLang === 'en' ? wuxingMapEn[maxWuxing] : wuxingMapAr[maxWuxing];
+    
+    if (currentLang === 'zh') {
+        document.getElementById('wuxingAnalysis').innerHTML = `
+            ${t.wuxingDistribution}：<br>
+            金:${wuxingCount.jin} 木:${wuxingCount.mu} 水:${wuxingCount.shui} 火:${wuxingCount.huo} 土:${wuxingCount.tu}<br><br>
+            <strong>${t.wuxingPartial}${wuxingName}</strong>，${wuxingName}旺之人${getWuxingDesc(maxWuxing)}
+        `;
+    } else if (currentLang === 'en') {
+        document.getElementById('wuxingAnalysis').innerHTML = `
+            ${t.wuxingDistribution}:<br>
+            Metal:${wuxingCount.jin} Wood:${wuxingCount.mu} Water:${wuxingCount.shui} Fire:${wuxingCount.huo} Earth:${wuxingCount.tu}<br><br>
+            <strong>${t.wuxingPartial}: ${wuxingName}</strong><br>
+            ${getWuxingDescEn(maxWuxing)}
+        `;
+    } else {
+        document.getElementById('wuxingAnalysis').innerHTML = `
+            ${t.wuxingDistribution}:<br>
+            المعدن:${wuxingCount.jin} الخشب:${wuxingCount.mu} الماء:${wuxingCount.shui} النار:${wuxingCount.huo} التراب:${wuxingCount.tu}<br><br>
+            <strong>${t.wuxingPartial}: ${wuxingName}</strong>
+        `;
+    }
     
     // 显示大运简批
     const dayunAge = 3 + (document.querySelector('input[name="gender"]:checked').value === 'male' ? 0 : 1);
-    document.getElementById('dayunSimple').innerHTML = `
-        您${dayunAge}岁起运，每十年一大运。<br><br>
-        当前大运阶段，<strong>${scores.overall >= 80 ? '运势顺遂，宜积极进取' : scores.overall >= 60 ? '运势平稳，稳扎稳打' : '运势波折，宜守不宜攻'}</strong>。<br><br>
-        建议：${scores.overall >= 80 ? '把握机会，大胆前行' : scores.overall >= 60 ? '脚踏实地，稳步前进' : '低调行事，积蓄力量'}
-    `;
+    if (currentLang === 'zh') {
+        document.getElementById('dayunSimple').innerHTML = `
+            ${t.dayunStart}${dayunAge}${t.dayunCycle}。<br><br>
+            ${t.dayunCurrent}，<strong>${scores.overall >= 80 ? '运势顺遂，宜积极进取' : scores.overall >= 60 ? '运势平稳，稳扎稳打' : '运势波折，宜守不宜攻'}</strong>。<br><br>
+            建议：${scores.overall >= 80 ? '把握机会，大胆前行' : scores.overall >= 60 ? '脚踏实地，稳步前进' : '低调行事，积蓄力量'}
+        `;
+    } else if (currentLang === 'en') {
+        document.getElementById('dayunSimple').innerHTML = `
+            ${t.dayunStart} ${dayunAge}. ${t.dayunCycle}.<br><br>
+            ${t.dayunCurrent}: <strong>${scores.overall >= 80 ? 'Good fortune, be proactive' : scores.overall >= 60 ? 'Stable fortune, steady progress' : 'Turbulent fortune, be cautious'}</strong>.<br><br>
+            Advice: ${scores.overall >= 80 ? 'Seize opportunities' : scores.overall >= 60 ? 'Steady progress' : 'Stay low and accumulate strength'}
+        `;
+    } else {
+        document.getElementById('dayunSimple').innerHTML = `
+            ${t.dayunStart} ${dayunAge} ${t.dayunCycle}<br><br>
+            ${t.dayunCurrent}: <strong>${scores.overall >= 80 ? 'حظ جيد' : scores.overall >= 60 ? 'حظ مستقر' : 'حظ متقلب'}</strong>
+        `;
+    }
     
     document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
 }
@@ -562,6 +694,17 @@ function getWuxingDesc(wuxing) {
         shui: '性格聪明灵活，善变通，有智慧。适合从事贸易、物流、咨询等工作。',
         huo: '性格热情开朗，有礼貌，善表达。适合从事演艺、营销、公关等工作。',
         tu: '性格稳重可靠，讲信用，善包容。适合从事建筑、农业、房地产等工作。'
+    };
+    return descs[wuxing];
+}
+
+function getWuxingDescEn(wuxing) {
+    const descs = {
+        jin: 'Decisive and determined, suitable for finance, law, management.',
+        mu: 'Kind and compassionate, suitable for education, culture, healthcare.',
+        shui: 'Intelligent and adaptable, suitable for trade, logistics, consulting.',
+        huo: 'Enthusiastic and expressive, suitable for performing arts, marketing, PR.',
+        tu: 'Steady and reliable, suitable for construction, agriculture, real estate.'
     };
     return descs[wuxing];
 }
