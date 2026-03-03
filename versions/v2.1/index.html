@@ -263,6 +263,122 @@
             font-size: 0.9em;
         }
         .footer a { color: #d4af37; text-decoration: none; }
+        
+        /* 塔罗牌样式 */
+        .tarot-card {
+            width: 120px;
+            height: 200px;
+            background: linear-gradient(135deg, #1a1a2e, #2d1b4e);
+            border: 2px solid #d4af37;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .tarot-card:hover {
+            transform: translateY(-10px) rotateY(10deg);
+            box-shadow: 0 15px 30px rgba(212,175,55,0.4);
+        }
+        .tarot-card.reversed {
+            transform: rotate(180deg);
+        }
+        .tarot-card-back {
+            background: linear-gradient(135deg, #2d1b4e, #1a1a2e);
+            background-image: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(212,175,55,0.1) 10px,
+                rgba(212,175,55,0.1) 20px
+            );
+        }
+        .tarot-card-front {
+            display: none;
+        }
+        .tarot-card.flipped .tarot-card-back { display: none; }
+        .tarot-card.flipped .tarot-card-front { display: flex; }
+        
+        .tarot-number {
+            font-size: 2em;
+            color: #d4af37;
+            font-weight: bold;
+        }
+        .tarot-name {
+            font-size: 0.9em;
+            color: #f4e5c2;
+            text-align: center;
+            padding: 5px;
+        }
+        .tarot-position {
+            position: absolute;
+            top: 5px;
+            font-size: 0.75em;
+            color: #d4af37;
+            background: rgba(0,0,0,0.5);
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        
+        .tarot-reading-box {
+            background: linear-gradient(135deg, rgba(45,27,78,0.3), rgba(26,26,46,0.3));
+            border: 1px solid rgba(212,175,55,0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .tarot-reading-box h4 {
+            color: #d4af37;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+        .tarot-meaning {
+            line-height: 1.9;
+            color: #d0d0d0;
+            margin-bottom: 15px;
+        }
+        .combined-reading {
+            background: linear-gradient(135deg, rgba(212,175,55,0.1), rgba(212,175,55,0.05));
+            border-left: 4px solid #d4af37;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .combined-reading h5 {
+            color: #f4e5c2;
+            margin-bottom: 10px;
+        }
+        .advice-list {
+            list-style: none;
+            padding: 0;
+        }
+        .advice-list li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+            color: #e4e4e4;
+        }
+        .advice-list li::before {
+            content: "✦";
+            position: absolute;
+            left: 0;
+            color: #d4af37;
+        }
+        .outcome-section {
+            background: linear-gradient(135deg, rgba(0,255,0,0.1), rgba(0,255,0,0.05));
+            border: 1px solid rgba(0,255,0,0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .outcome-section h4 {
+            color: #90ee90;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
@@ -332,6 +448,33 @@
         </div>
         
         <button onclick="calculateAll()" id="calcBtn">开始测算</button>
+        
+        <!-- 塔罗牌占卜区域 -->
+        <div class="result-section" id="tarotSection" style="margin-top: 30px;">
+            <div class="input-section">
+                <div class="section-title">🔮 塔罗牌占卜</div>
+                
+                <div class="form-group">
+                    <label>你想问什么问题？（如：今天适合表白吗？这份工作要不要接受？）</label>
+                    <input type="text" id="tarotQuestion" placeholder="请输入你的问题..." style="width: 100%; padding: 12px;">
+                </div>
+                
+                <div style="text-align: center; margin: 20px 0;">
+                    <button onclick="drawTarot()" id="drawTarotBtn" style="width: auto; padding: 15px 40px; font-size: 16px;">抽取塔罗牌</button>
+                </div>
+                
+                <!-- 塔罗牌展示区域 -->
+                <div id="tarotCardsDisplay" style="display: none; margin-top: 20px;">
+                    <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin: 20px 0;" id="tarotCardsContainer">
+                        <!-- 塔罗牌将在这里显示 -->
+                    </div>
+                    
+                    <div id="tarotReading" style="margin-top: 20px;">
+                        <!-- 塔罗解读将在这里显示 -->
+                    </div>
+                </div>
+            </div>
+        </div>
         
         <!-- 结果区域 -->
         <div class="result-section" id="result">

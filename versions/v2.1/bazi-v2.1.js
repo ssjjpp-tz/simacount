@@ -568,3 +568,531 @@ function getWuxingDesc(wuxing) {
 
 // 初始化
 window.onload = init;
+
+// ==================== 塔罗牌数据 ====================
+const TAROT_CARDS = [
+    {
+        id: 0, name: '愚者', nameEn: 'The Fool',
+        upright: '新的开始、冒险、纯真、潜在的可能性。这是一张代表旅程开始的牌，象征着跳出舒适圈的勇气。',
+        reversed: '鲁莽、愚蠢、缺乏计划、冒险过度。需要更加谨慎，不要盲目行动。',
+        advice: '相信直觉，勇敢迈出第一步，但也要做好基本准备。',
+        element: '风', relation: '创新突破'
+    },
+    {
+        id: 1, name: '魔术师', nameEn: 'The Magician',
+        upright: '创造力、意志力、资源整合、显化能力。你拥有实现梦想所需的所有工具。',
+        reversed: '欺骗、缺乏自信、资源浪费、技能不足。需要重新评估自己的能力。',
+        advice: '发挥你的才能和资源优势，主动出击创造机会。',
+        element: '风', relation: '主动创造'
+    },
+    {
+        id: 2, name: '女祭司', nameEn: 'The High Priestess',
+        upright: '直觉、内在智慧、潜意识、神秘。相信你的第六感，答案就在内心深处。',
+        reversed: '表面化、忽视直觉、秘密暴露、缺乏深度。需要静下心来倾听内心。',
+        advice: '相信直觉，多观察少行动，等待最佳时机。',
+        element: '水', relation: '等待观察'
+    },
+    {
+        id: 3, name: '皇后', nameEn: 'The Empress',
+        upright: '丰饶、母性、创造力、享受、自然。这是一个收获和享受的美好时期。',
+        reversed: '依赖、过度保护、创造力受阻、物质匮乏。需要独立和自给自足。',
+        advice: '享受生活的美好，培养创造力，关注身心健康。',
+        element: '土', relation: '享受收获'
+    },
+    {
+        id: 4, name: '皇帝', nameEn: 'The Emperor',
+        upright: '权威、结构、父性、控制、稳定。建立规则和秩序，展现领导力。',
+        reversed: '专制、僵化、缺乏纪律、滥用权力。需要更加灵活和包容。',
+        advice: '建立稳定的基础，制定清晰的计划，展现领导力。',
+        element: '火', relation: '掌控主导'
+    },
+    {
+        id: 5, name: '教皇', nameEn: 'The Hierophant',
+        upright: '传统、信仰、教育、指导、精神价值。遵循传统智慧，寻求导师指引。',
+        reversed: '反叛、非传统、个人信仰、打破规则。需要找到自己的道路。',
+        advice: '尊重传统和经验，但也要保持开放的心态。',
+        element: '土', relation: '学习请教'
+    },
+    {
+        id: 6, name: '恋人', nameEn: 'The Lovers',
+        upright: '爱情、选择、和谐、价值观、结合。重要的关系或选择摆在面前。',
+        reversed: '不和谐、错误选择、价值观冲突、分离。需要重新审视关系。',
+        advice: '倾听内心，做出符合价值观的选择，珍惜重要关系。',
+        element: '风', relation: '情感选择'
+    },
+    {
+        id: 7, name: '战车', nameEn: 'The Chariot',
+        upright: '意志力、胜利、决心、控制、前进。通过意志力克服障碍，取得成功。',
+        reversed: '失控、失败、缺乏方向、意志力不足。需要重新掌控局面。',
+        advice: '坚定目标，控制情绪，勇往直前但保持方向感。',
+        element: '水', relation: '突破前进'
+    },
+    {
+        id: 8, name: '力量', nameEn: 'Strength',
+        upright: '内在力量、勇气、耐心、同情心、掌控。以柔克刚，用耐心克服困难。',
+        reversed: '软弱、自我怀疑、缺乏勇气、失控。需要找回内在的力量。',
+        advice: '用耐心和同情心面对挑战，相信内在的力量。',
+        element: '火', relation: '耐心坚持'
+    },
+    {
+        id: 9, name: '隐士', nameEn: 'The Hermit',
+        upright: '内省、独处、寻求真理、智慧、指引。退后一步，寻找内在答案。',
+        reversed: '孤独、迷失、社交退缩、拒绝建议。需要走出独处，寻求帮助。',
+        advice: '花时间独处反思，寻找内在智慧，但也要适度社交。',
+        element: '土', relation: '反思沉淀'
+    },
+    {
+        id: 10, name: '命运之轮', nameEn: 'Wheel of Fortune',
+        upright: '变化、周期、命运、转机、好运。命运之轮转动，好运即将来临。',
+        reversed: '厄运、阻力、坏运气、抗拒变化。需要接受变化，等待转机。',
+        advice: '顺应变化，抓住机会，相信命运的安排。',
+        element: '火', relation: '顺势而为'
+    },
+    {
+        id: 11, name: '正义', nameEn: 'Justice',
+        upright: '公正、真理、因果、法律、责任。公正的结果，为自己的行为负责。',
+        reversed: '不公、不诚实、逃避责任、因果报应。需要诚实面对，承担责任。',
+        advice: '公平公正地处理事情，诚实面对，承担应有的责任。',
+        element: '风', relation: '公正决策'
+    },
+    {
+        id: 12, name: '倒吊人', nameEn: 'The Hanged Man',
+        upright: '牺牲、等待、新视角、放下、耐心。换个角度看问题，学会等待。',
+        reversed: '抗拒、拖延、无意义的牺牲、固执。需要放下执着，接受现实。',
+        advice: '换个角度思考，学会等待和放下，不要急于行动。',
+        element: '水', relation: '等待转化'
+    },
+    {
+        id: 13, name: '死神', nameEn: 'Death',
+        upright: '结束、转变、重生、放下过去、新的开始。旧事物的结束带来新开始。',
+        reversed: '抗拒改变、停滞、无法放手、恐惧结束。需要接受结束，迎接新生。',
+        advice: '接受结束和变化，放下过去，迎接新的开始。',
+        element: '水', relation: '结束新生'
+    },
+    {
+        id: 14, name: '节制', nameEn: 'Temperance',
+        upright: '平衡、调和、耐心、中庸、融合。寻找平衡，融合对立面。',
+        reversed: '极端、失衡、过度、冲突。需要寻找平衡，避免极端。',
+        advice: '保持平衡和耐心，融合不同观点，避免极端。',
+        element: '火', relation: '平衡调和'
+    },
+    {
+        id: 15, name: '恶魔', nameEn: 'The Devil',
+        upright: '束缚、欲望、物质主义、诱惑、执念。被物质或欲望所束缚。',
+        reversed: '解放、摆脱束缚、重获自由、打破枷锁。有机会摆脱束缚。',
+        advice: '审视自己的执念和束缚，寻求解放和自由。',
+        element: '土', relation: '摆脱束缚'
+    },
+    {
+        id: 16, name: '塔', nameEn: 'The Tower',
+        upright: '突然变化、灾难、觉醒、破坏、真相。突然的变化打破旧有结构。',
+        reversed: '避免灾难、延迟变化、轻微震荡、内在觉醒。变化较温和。',
+        advice: '接受突然的变化，从中觉醒和成长，重建更好的基础。',
+        element: '火', relation: '突变觉醒'
+    },
+    {
+        id: 17, name: '星星', nameEn: 'The Star',
+        upright: '希望、灵感、宁静、信心、指引。充满希望和灵感的美好时期。',
+        reversed: '绝望、失去信心、缺乏灵感、悲观。需要重拾希望和信心。',
+        advice: '保持希望和信心，相信未来，跟随内心的指引。',
+        element: '风', relation: '希望指引'
+    },
+    {
+        id: 18, name: '月亮', nameEn: 'The Moon',
+        upright: '幻觉、恐惧、潜意识、不确定性、直觉。事情不明朗，需要依靠直觉。',
+        reversed: '真相大白、克服恐惧、迷雾散去、 clarity。真相即将揭晓。',
+        advice: '相信直觉，面对恐惧，等待真相大白。',
+        element: '水', relation: '直觉探索'
+    },
+    {
+        id: 19, name: '太阳', nameEn: 'The Sun',
+        upright: '成功、快乐、活力、正能量、清晰。充满阳光和成功的时期。',
+        reversed: '暂时的阴霾、过度乐观、延迟成功、缺乏活力。成功稍延迟。',
+        advice: '保持积极乐观，享受成功和快乐，散发正能量。',
+        element: '火', relation: '成功快乐'
+    },
+    {
+        id: 20, name: '审判', nameEn: 'Judgement',
+        upright: '重生、觉醒、评判、宽恕、召唤。重大觉醒，重生的时刻。',
+        reversed: '自我怀疑、拒绝觉醒、逃避评判、缺乏宽恕。需要自我反思。',
+        advice: '听从内心的召唤，宽恕自己和他人，迎接重生。',
+        element: '火', relation: '觉醒重生'
+    },
+    {
+        id: 21, name: '世界', nameEn: 'The World',
+        upright: '完成、圆满、成就、整合、旅行。一个周期的圆满完成。',
+        reversed: '未完成、延迟、缺乏 closure、不完美。还有未完成的课题。',
+        advice: '庆祝成就，完成未竟之事，准备新的旅程。',
+        element: '土', relation: '圆满成就'
+    }
+];
+
+// 当前抽到的塔罗牌
+let currentTarotCards = [];
+let currentBaziData = null;
+
+// ==================== 塔罗牌功能 ====================
+function drawTarot() {
+    const question = document.getElementById('tarotQuestion').value.trim();
+    if (!question) {
+        alert('请先输入你想问的问题');
+        return;
+    }
+    
+    // 如果没有先算八字，提示先算八字
+    if (!currentBaziData) {
+        alert('建议先完成八字测算，塔罗牌会与八字运势结合给出更准确的解读');
+    }
+    
+    // 随机抽取3张牌（过去、现在、未来）
+    currentTarotCards = [];
+    const usedIndices = new Set();
+    
+    while (currentTarotCards.length < 3) {
+        const index = Math.floor(Math.random() * TAROT_CARDS.length);
+        if (!usedIndices.has(index)) {
+            usedIndices.add(index);
+            const isReversed = Math.random() < 0.3; // 30%概率逆位
+            currentTarotCards.push({
+                ...TAROT_CARDS[index],
+                position: currentTarotCards.length,
+                reversed: isReversed
+            });
+        }
+    }
+    
+    // 显示塔罗牌
+    displayTarotCards(question);
+}
+
+function displayTarotCards(question) {
+    const displaySection = document.getElementById('tarotCardsDisplay');
+    const container = document.getElementById('tarotCardsContainer');
+    const readingSection = document.getElementById('tarotReading');
+    
+    displaySection.style.display = 'block';
+    
+    const positions = ['过去/根源', '现在/状况', '未来/结果'];
+    
+    // 显示牌面
+    container.innerHTML = currentTarotCards.map((card, index) => `
+        <div class="tarot-card ${card.reversed ? 'reversed' : ''}" onclick="flipCard(this, ${index})" style="animation: fadeIn 0.5s ease ${index * 0.2}s both;">
+            <div class="tarot-card-back">
+                <div class="tarot-number">?</div>
+                <div class="tarot-name">点击翻牌</div>
+            </div>
+            <div class="tarot-card-front">
+                <div class="tarot-position">${positions[index]}</div>
+                <div class="tarot-number">${card.id}</div>
+                <div class="tarot-name">${card.name}${card.reversed ? '<br><small>(逆位)</small>' : ''}</div>
+            </div>
+        </div>
+    `).join('');
+    
+    // 生成综合解读
+    generateTarotReading(question);
+}
+
+function flipCard(element, index) {
+    element.classList.toggle('flipped');
+}
+
+function generateTarotReading(question) {
+    const readingSection = document.getElementById('tarotReading');
+    
+    const positions = ['过去/根源', '现在/状况', '未来/结果'];
+    const positionDesc = [
+        '代表这个问题的根源或过去的影响',
+        '代表当前的状况和面临的挑战',
+        '代表可能的结果或未来的走向'
+    ];
+    
+    let cardsHtml = currentTarotCards.map((card, index) => {
+        const meaning = card.reversed ? card.reversed : card.upright;
+        return `
+            <div class="tarot-reading-box">
+                <h4>${positions[index]}：${card.name}${card.reversed ? '（逆位）' : ''}</h4>
+                <p style="color: #888; font-size: 0.9em; margin-bottom: 10px;">${positionDesc[index]}</p>
+                <p class="tarot-meaning">${meaning}</p>
+                <p style="color: #d4af37; margin-top: 10px;"><strong>建议：</strong>${card.advice}</p>
+            </div>
+        `;
+    }).join('');
+    
+    // 八字与塔罗结合解读
+    let combinedHtml = '';
+    if (currentBaziData) {
+        const { relation, scores } = currentBaziData;
+        const baziAdvice = generateBaziTarotAdvice(relation, scores);
+        
+        combinedHtml = `
+            <div class="combined-reading">
+                <h5>🔮 八字与塔罗综合解读</h5>
+                <p style="margin-bottom: 15px;">
+                    你的八字显示今日为<strong style="color: #f4e5c2;">${relation}</strong>，
+                    综合运势<strong style="color: #d4af37;">${scores.overall}分</strong>。
+                    塔罗牌为你问的问题"<em>${question}</em>"提供了更深层的指引。
+                </p>
+                <p style="margin-bottom: 15px;">${baziAdvice}</p>
+            </div>
+        `;
+    }
+    
+    // 具体建议和行动方案
+    const specificAdvice = generateSpecificAdvice(question, currentTarotCards, currentBaziData);
+    
+    readingSection.innerHTML = `
+        <h3 style="color: #d4af37; margin-bottom: 20px; text-align: center;">🔮 塔罗牌解读：${question}</h3>
+        ${cardsHtml}
+        ${combinedHtml}
+        
+        <div class="outcome-section">
+            <h4>🎯 针对你问题的具体建议</h4>
+            <div style="margin-top: 15px;">
+                <h5 style="color: #f4e5c2; margin-bottom: 10px;">当前形势分析：</h5>
+                <p style="line-height: 1.8; color: #d0d0d0; margin-bottom: 15px;">${specificAdvice.analysis}</p>
+                
+                <h5 style="color: #f4e5c2; margin-bottom: 10px;">行动建议：</h5>
+                <ul class="advice-list">
+                    ${specificAdvice.actions.map(a => `<li>${a}</li>`).join('')}
+                </ul>
+                
+                <h5 style="color: #f4e5c2; margin: 15px 0 10px;">如何改变/优化结局：</h5>
+                <ul class="advice-list">
+                    ${specificAdvice.improvements.map(i => `<li>${i}</li>`).join('')}
+                </ul>
+                
+                <h5 style="color: #f4e5c2; margin: 15px 0 10px;">成功概率预测：</h5>
+                <div style="background: rgba(0,0,0,0.3); border-radius: 10px; padding: 15px;">
+                    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                        <span style="width: 100px; color: #a0a0a0;">成功概率：</span>
+                        <div class="progress-bar" style="flex: 1; margin: 0 10px;">
+                            <div class="progress-fill" style="width: ${specificAdvice.successRate}%; background: linear-gradient(90deg, #d4af37, #f4e5c2);"></div>
+                        </div>
+                        <span style="color: #d4af37; font-weight: bold;">${specificAdvice.successRate}%</span>
+                    </div>
+                    <p style="color: #888; font-size: 0.9em;">${specificAdvice.successComment}</p>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function generateBaziTarotAdvice(relation, scores) {
+    const adviceMap = {
+        '比肩': '今日比肩日适合独立自主，塔罗牌建议你相信自己的判断，不要过度依赖他人。',
+        '劫财': '劫财日需谨慎理财，塔罗牌提醒你注意潜在的风险，不要冲动决策。',
+        '食神': '食神日适合享受生活，塔罗牌建议你在追求目标的过程中也要懂得享受过程。',
+        '伤官': '伤官日思维活跃，塔罗牌鼓励你大胆表达想法，但要注意方式方法。',
+        '偏财': '偏财日机遇多多，塔罗牌显示可能有意外收获，保持开放心态。',
+        '正财': '正财日适合踏实工作，塔罗牌建议你稳扎稳打，按部就班前进。',
+        '七杀': '七杀日有挑战，塔罗牌显示可能需要面对困难，但这也是成长的机会。',
+        '正官': '正官日贵人运旺，塔罗牌暗示可能有贵人相助，保持谦逊态度。',
+        '偏印': '偏印日适合学习思考，塔罗牌建议你多观察少行动，等待时机。',
+        '正印': '正印日福泽深厚，塔罗牌显示今日有逢凶化吉之象，放心前行。'
+    };
+    return adviceMap[relation] || '结合八字与塔罗，今日宜保持平衡心态，顺势而为。';
+}
+
+function generateSpecificAdvice(question, cards, baziData) {
+    let successRate = 70;
+    let analysis = '';
+    let actions = [];
+    let improvements = [];
+    
+    // 根据牌面分析
+    const hasPositiveCards = cards.some(c => 
+        ['太阳', '星星', '世界', '魔术师', '皇后'].includes(c.name) && !c.reversed
+    );
+    const hasNegativeCards = cards.some(c => 
+        ['塔', '恶魔', '月亮'].includes(c.name) && !c.reversed
+    );
+    const hasReversed = cards.some(c => c.reversed);
+    
+    // 分析问题类型并给出建议
+    const questionLower = question.toLowerCase();
+    
+    if (questionLower.includes('表白') || questionLower.includes('感情') || questionLower.includes('喜欢')) {
+        analysis = '塔罗牌显示这是一个与情感相关的问题。';
+        if (hasPositiveCards) {
+            analysis += '牌面整体偏向积极，暗示当前是表达情感的好时机。';
+            successRate += 15;
+            actions = [
+                '选择一个轻松愉快的时机表达',
+                '真诚地表达你的感受，不要过度包装',
+                '准备好接受任何结果，保持平常心'
+            ];
+        } else if (hasNegativeCards) {
+            analysis += '但牌面显示可能存在一些阻碍或不确定性，建议暂缓。';
+            successRate -= 15;
+            actions = [
+                '先建立更深的了解和信任',
+                '观察对方的反应和态度',
+                '等待更合适的时机'
+            ];
+        } else {
+            analysis += '牌面显示需要更多耐心和观察。';
+            actions = [
+                '多创造相处机会，增进了解',
+                '通过共同兴趣建立连接',
+                '适时表达关心，测试对方反应'
+            ];
+        }
+        
+        improvements = [
+            '提升自信，展现最真实的自己',
+            '培养更多共同话题和兴趣',
+            '学会倾听，了解对方真实想法',
+            '保持独立，不要过度依赖对方回应'
+        ];
+    } else if (questionLower.includes('工作') || questionLower.includes('辞职') || questionLower.includes('offer') || questionLower.includes('面试')) {
+        analysis = '这是一个关于职业发展的重大问题。';
+        if (hasPositiveCards && !hasReversed) {
+            analysis += '塔罗牌显示积极信号，当前是推进工作相关事务的好时机。';
+            successRate += 20;
+            actions = [
+                '积极准备，展现专业能力',
+                '主动沟通，表达你的意愿',
+                '把握机会，果断行动'
+            ];
+        } else if (cards[2].reversed || hasNegativeCards) {
+            analysis += '但未来牌面显示可能有一些挑战，需要谨慎考虑。';
+            successRate -= 10;
+            actions = [
+                '全面评估利弊，不要只看表面',
+                '准备好备选方案',
+                '寻求专业人士或前辈的建议'
+            ];
+        } else {
+            analysis += '牌面显示这是一个需要深思熟虑的决定。';
+            actions = [
+                '列出优缺点对比表',
+                '咨询信任的朋友或导师',
+                '给自己设定决策期限'
+            ];
+        }
+        
+        improvements = [
+            '持续学习，提升核心竞争力',
+            '建立行业人脉，拓宽视野',
+            '明确职业目标，制定长期规划',
+            '保持职业素养，积累好口碑'
+        ];
+    } else if (questionLower.includes('投资') || questionLower.includes('理财') || questionLower.includes('买') || questionLower.includes('花钱')) {
+        analysis = '这是一个涉及财务决策的问题。';
+        if (baziData && baziData.scores.wealth >= 80) {
+            analysis += '你的八字显示今日财运较旺，但塔罗牌建议仍需谨慎。';
+            successRate = Math.min(85, successRate + 10);
+        }
+        
+        if (hasPositiveCards) {
+            actions = [
+                '做好充分调研，不要盲目跟风',
+                '设定明确的止盈止损点',
+                '分散投资，不要孤注一掷'
+            ];
+        } else {
+            successRate -= 10;
+            actions = [
+                '暂缓重大财务决策',
+                '咨询专业理财顾问',
+                '优先建立应急储蓄'
+            ];
+        }
+        
+        improvements = [
+            '学习理财知识，提升财商',
+            '建立预算制度，控制支出',
+            '区分"想要"和"需要"',
+            '定期复盘，调整理财策略'
+        ];
+    } else {
+        // 通用建议
+        analysis = '塔罗牌为你的问题提供了多维度的视角。';
+        
+        // 根据三张牌的综合给出建议
+        const firstCard = cards[0];
+        const lastCard = cards[2];
+        
+        if (!firstCard.reversed && !lastCard.reversed) {
+            analysis += '整体来看，事情的发展趋势是积极的。';
+            successRate += 10;
+        } else if (lastCard.reversed) {
+            analysis += '结果牌显示可能需要更多努力或调整策略。';
+            successRate -= 5;
+        }
+        
+        actions = [
+            '明确你的真实目标和动机',
+            '收集更多信息，做好充分准备',
+            '制定具体可执行的计划',
+            '设定检查点，及时调整策略'
+        ];
+        
+        improvements = [
+            '提升相关技能和知识',
+            '建立支持系统，寻求帮助',
+            '保持灵活，准备Plan B',
+            '培养耐心，相信过程'
+        ];
+    }
+    
+    // 结合八字调整成功率
+    if (baziData) {
+        const { scores } = baziData;
+        if (scores.overall >= 85) {
+            successRate += 5;
+        } else if (scores.overall < 60) {
+            successRate -= 10;
+        }
+    }
+    
+    // 确保成功率在合理范围
+    successRate = Math.max(30, Math.min(95, successRate));
+    
+    let successComment = '';
+    if (successRate >= 80) {
+        successComment = '成功率很高！把握时机，积极行动。';
+    } else if (successRate >= 60) {
+        successComment = '成功率中等，做好准备，谨慎推进。';
+    } else {
+        successComment = '成功率偏低，建议暂缓，先改善条件。';
+    }
+    
+    return {
+        successRate,
+        analysis,
+        actions,
+        improvements,
+        successComment
+    };
+}
+
+// 在计算八字时保存数据供塔罗使用
+const originalCalculateAll = calculateAll;
+calculateAll = function() {
+    originalCalculateAll();
+    
+    // 保存八字数据
+    const birthYear = parseInt(document.getElementById('birthYear').value);
+    const birthMonth = parseInt(document.getElementById('birthMonth').value);
+    const birthDay = parseInt(document.getElementById('birthDay').value);
+    const birthHour = parseInt(document.getElementById('birthHour').value);
+    const targetYear = parseInt(document.getElementById('targetYear').value);
+    const targetMonth = parseInt(document.getElementById('targetMonth').value);
+    const targetDay = parseInt(document.getElementById('targetDay').value);
+    
+    if (birthYear && birthMonth && birthDay && !isNaN(birthHour)) {
+        const yearPillar = getYearPillar(birthYear);
+        const monthPillar = getMonthPillar(birthYear, birthMonth, yearPillar.ganIndex);
+        const dayPillar = getDayPillar(birthYear, birthMonth, birthDay);
+        const targetDayPillar = getDayPillar(targetYear, targetMonth, targetDay);
+        const relation = getShiShen(dayPillar.ganIndex, targetDayPillar.ganIndex);
+        const scores = calculateScores(relation);
+        
+        currentBaziData = { relation, scores };
+        
+        // 显示塔罗牌区域
+        document.getElementById('tarotSection').style.display = 'block';
+    }
+};
