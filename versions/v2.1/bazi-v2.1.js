@@ -498,7 +498,7 @@ function calculateAll() {
     
     // 计算日主关系
     const relation = getShiShen(dayPillar.ganIndex, targetDayPillar.ganIndex);
-    const reading = DETAILED_READINGS[relation];
+    const reading = getReading(relation);
     
     // 计算运势分数
     const scores = calculateScores(relation);
@@ -608,18 +608,46 @@ function displayResults(sizhu, reading, scores, birthYear, birthMonth, birthDay)
     
     // 显示生肖运势
     const shengxiao = getShengXiao(birthYear);
-    const sxData = SHENGXIAO_FORTUNE[shengxiao];
+    const sxData = getShengxiaoFortune(shengxiao);
+    const shengxiaoNameMap = {
+        '鼠': currentLang === 'en' ? 'Rat' : currentLang === 'ar' ? 'الجرذ' : '鼠',
+        '牛': currentLang === 'en' ? 'Ox' : currentLang === 'ar' ? 'الثور' : '牛',
+        '虎': currentLang === 'en' ? 'Tiger' : currentLang === 'ar' ? 'النمر' : '虎',
+        '兔': currentLang === 'en' ? 'Rabbit' : currentLang === 'ar' ? 'الأرنب' : '兔',
+        '龙': currentLang === 'en' ? 'Dragon' : currentLang === 'ar' ? 'التنين' : '龙',
+        '蛇': currentLang === 'en' ? 'Snake' : currentLang === 'ar' ? 'الثعبان' : '蛇',
+        '马': currentLang === 'en' ? 'Horse' : currentLang === 'ar' ? 'الحصان' : '马',
+        '羊': currentLang === 'en' ? 'Goat' : currentLang === 'ar' ? 'الماعز' : '羊',
+        '猴': currentLang === 'en' ? 'Monkey' : currentLang === 'ar' ? 'القرد' : '猴',
+        '鸡': currentLang === 'en' ? 'Rooster' : currentLang === 'ar' ? 'الديك' : '鸡',
+        '狗': currentLang === 'en' ? 'Dog' : currentLang === 'ar' ? 'الكلب' : '狗',
+        '猪': currentLang === 'en' ? 'Pig' : currentLang === 'ar' ? 'الخنزير' : '猪'
+    };
     const sxLabel = currentLang === 'zh' ? '属' : currentLang === 'en' ? 'Chinese Zodiac: ' : 'البرج الصيني: ';
     document.getElementById('shengxiaoFortune').innerHTML = `
-        <strong>${sxLabel}${shengxiao}</strong> - ${sxData.desc}<br><br>
+        <strong>${sxLabel}${shengxiaoNameMap[shengxiao]}</strong> - ${sxData.desc}<br><br>
         ${sxData.today}
     `;
     
     // 显示星座运势
     const xingzuo = getXingZuo(birthMonth, birthDay);
-    const xzData = XINGZUO_FORTUNE[xingzuo];
+    const xzData = getXingzuoFortune(xingzuo);
+    const xingzuoNameMap = {
+        '摩羯座': currentLang === 'en' ? 'Capricorn' : currentLang === 'ar' ? 'الجدي' : '摩羯座',
+        '水瓶座': currentLang === 'en' ? 'Aquarius' : currentLang === 'ar' ? 'الدلو' : '水瓶座',
+        '双鱼座': currentLang === 'en' ? 'Pisces' : currentLang === 'ar' ? 'الحوت' : '双鱼座',
+        '白羊座': currentLang === 'en' ? 'Aries' : currentLang === 'ar' ? 'الحمل' : '白羊座',
+        '金牛座': currentLang === 'en' ? 'Taurus' : currentLang === 'ar' ? 'الثور' : '金牛座',
+        '双子座': currentLang === 'en' ? 'Gemini' : currentLang === 'ar' ? 'الجوزاء' : '双子座',
+        '巨蟹座': currentLang === 'en' ? 'Cancer' : currentLang === 'ar' ? 'السرطان' : '巨蟹座',
+        '狮子座': currentLang === 'en' ? 'Leo' : currentLang === 'ar' ? 'الأسد' : '狮子座',
+        '处女座': currentLang === 'en' ? 'Virgo' : currentLang === 'ar' ? 'العذراء' : '处女座',
+        '天秤座': currentLang === 'en' ? 'Libra' : currentLang === 'ar' ? 'الميزان' : '天秤座',
+        '天蝎座': currentLang === 'en' ? 'Scorpio' : currentLang === 'ar' ? 'العقرب' : '天蝎座',
+        '射手座': currentLang === 'en' ? 'Sagittarius' : currentLang === 'ar' ? 'القوس' : '射手座'
+    };
     document.getElementById('xingzuoFortune').innerHTML = `
-        <strong>${xingzuo}</strong> - ${xzData.desc}<br><br>
+        <strong>${xingzuoNameMap[xingzuo]}</strong> - ${xzData.desc}<br><br>
         ${xzData.today}
     `;
     
@@ -687,7 +715,32 @@ function countWuxing(sizhu) {
     return count;
 }
 
-function getWuxingDesc(wuxing) {
+function getReading(relation) {
+    const readings = {
+        zh: DETAILED_READINGS,
+        en: DETAILED_READINGS_EN,
+        ar: DETAILED_READINGS
+    };
+    return readings[currentLang]?.[relation] || DETAILED_READINGS[relation];
+}
+
+function getShengxiaoFortune(shengxiao) {
+    const fortunes = {
+        zh: SHENGXIAO_FORTUNE,
+        en: SHENGXIAO_FORTUNE_EN,
+        ar: SHENGXIAO_FORTUNE
+    };
+    return fortunes[currentLang]?.[shengxiao] || SHENGXIAO_FORTUNE[shengxiao];
+}
+
+function getXingzuoFortune(xingzuo) {
+    const fortunes = {
+        zh: XINGZUO_FORTUNE,
+        en: XINGZUO_FORTUNE_EN,
+        ar: XINGZUO_FORTUNE
+    };
+    return fortunes[currentLang]?.[xingzuo] || XINGZUO_FORTUNE[xingzuo];
+}
     const descs = {
         jin: '性格刚毅果断，有决断力，重义气。适合从事金融、法律、管理等工作。',
         mu: '性格仁慈正直，有同情心，善成长。适合从事教育、文化、医疗等工作。',
@@ -1489,3 +1542,129 @@ function selectFate(type) {
     resultDiv.style.display = 'block';
     resultDiv.scrollIntoView({ behavior: 'smooth' });
 }
+
+// ==================== 英文详细解读数据 ====================
+const DETAILED_READINGS_EN = {
+    '比肩': {
+        title: 'Peer Day - Self-Improvement Day',
+        shortDesc: 'Peer represents self, peers, friends, competition. Today is a Peer day, suitable for self-reflection.',
+        fullDesc: 'Peer Day is ideal for gathering with friends and teamwork, but watch out for competitive relationships. Your independence is strong today, perfect for completing tasks alone. Financially, Peer days may indicate sharing wealth - be cautious with large expenses. In relationships, singles may meet new people through friends; those in relationships should avoid arguments over trivial matters. Peer Day is also a good time for self-reflection and planning for the future.',
+        career: 'Suitable for teamwork and collaborative projects. Discuss ideas with colleagues and brainstorm together. Avoid direct competition and maintain a harmonious work atmosphere. Today is also good for learning new skills to enhance competitiveness.',
+        wealth: 'Stable finances, but watch out for shared expenses. Avoid large investments or loans; small spending is fine. Today is suitable for creating financial plans and preparing for future goals.',
+        love: 'Friends may introduce potential partners - attend social activities. Those with partners should focus on communication and avoid stubbornness. Today is good for attending gatherings together.',
+        health: 'Pay attention to digestive health and eat regularly. Peer days may bring work stress affecting digestion. Eat smaller meals more frequently and exercise moderately to relieve stress.'
+    },
+    '劫财': {
+        title: 'Rob Wealth Day - Financial Caution Day',
+        shortDesc: 'Rob Wealth represents competition, loss, impulsiveness. Today requires careful financial management.',
+        fullDesc: 'Rob Wealth Day requires special attention to financial management. Avoid impulsive spending and investments. You may encounter competitors at work today - stay calm and do not be provoked. Although Rob Wealth days have loss implications, they are also opportunities to develop adaptability. In relationships, be more tolerant to avoid disputes.',
+        career: 'Competition is fierce - stay calm. You may encounter strong competitors, but do not be angered. Guard against backstabbers and back up important files. Avoid major career decisions today.',
+        wealth: 'Poor financial luck - avoid lending and investing. Focus on saving money. Unexpected expenses may occur today, so control your budget carefully.',
+        love: 'Prone to arguments - practice tolerance. Avoid major relationship decisions like breaking up or confessing feelings. Singles have poor romantic luck today.',
+        health: 'Pay attention to traffic safety and avoid intense exercise. Rob Wealth days are prone to small accidents. Emotional fluctuations are common - practice meditation or yoga to calm your mind.'
+    },
+    '食神': {
+        title: 'Food God Day - Enjoyment Day',
+        shortDesc: 'Food God represents enjoyment, good fortune, talent, gentleness. Today is perfect for relaxation.',
+        fullDesc: 'Food God Day is for enjoying life - perfect for tasting delicious food and leisure activities. Your creativity and expressiveness are strong today, suitable for creative and presentation work. Food God also represents good fortune - you will have good relationships and easily receive help from others. Financially, Food God generates wealth - there may be small income. Singles may meet interesting people today.',
+        career: 'Creativity is abundant - suitable for creation and planning. Expressiveness is enhanced - good for speeches, presentations, and negotiations. Your popularity is high today.',
+        wealth: 'Small wealth is available - good regular income. Unexpected income or bonuses may come. Suitable for earning through talents and skills, but do not be greedy.',
+        love: 'Romantic luck is strong - suitable for dating and expressing feelings. Your charm is enhanced today. Plan a romantic dinner or movie with your partner.',
+        health: 'Enjoy good food but do not overeat. Food God days tend toward overeating - maintain dietary control. Try new healthy eating habits.'
+    },
+    '伤官': {
+        title: 'Injury Officer Day - Creative Burst Day',
+        shortDesc: 'Injury Officer represents talent, expression, arrogance, change. Today your mind is active with unlimited creativity.',
+        fullDesc: 'Injury Officer Day brings active thinking and unlimited creativity - perfect for brainstorming and innovative work. Pay attention to verbal expression as you may speak too directly and offend others. Today is suitable for challenging authority and proposing new ideas, but be mindful of your approach. In relationships, you pursue romance but may also be overly critical.',
+        career: 'Creativity explodes - suitable for proposals and innovation. Challenge traditional methods and propose reforms. Pay attention to verbal expression. Good for artistic, design, and writing work.',
+        wealth: 'Side income luck is good but risky. Can earn through creativity and talent like writing and design. Be cautious with investments.',
+        love: 'Pursue perfection but easily critical. You may have excessively high expectations of your partner. Singles have high standards and may not easily find satisfactory matches.',
+        health: 'Pay attention to respiratory health and rest more. Injury Officer days tend toward overthinking - ensure adequate sleep. Suitable for outdoor walks and fresh air.'
+    },
+    '偏财': {
+        title: 'Side Wealth Day - Unexpected Gain Day',
+        shortDesc: 'Side Wealth represents unexpected gains, opportunities, social connections. Today brings many opportunities.',
+        fullDesc: 'Side Wealth Day is excellent for seeking wealth - unexpected gains and opportunities are likely. Social luck is strong today - suitable for networking and business entertainment. Side Wealth also represents liquid wealth - suitable for short-term investments. But remember: side wealth comes and goes quickly - take profits when you can. Romantically, today is passionate and suitable for dating.',
+        career: 'Good social luck - suitable for networking. Attend industry events where you may meet helpful people. Opportunities for extra income or bonuses exist.',
+        wealth: 'Excellent side income luck! Seize opportunities but do not be greedy. Unexpected money may come like prizes, red envelopes, or investment returns. Suitable for short-term理财.',
+        love: 'Romantic and passionate - suitable for dating and gift-giving. Your charm is at its peak today. Surprise your partner or confess to someone you like.',
+        health: 'Rest well and do not overdo social activities. Side Wealth days have many social engagements - balance work and rest. Drink alcohol in moderation to protect your liver.'
+    },
+    '正财': {
+        title: 'Proper Wealth Day - Steady Work Day',
+        shortDesc: 'Proper Wealth represents legitimate income, stability, practicality. Today is for steady progress.',
+        fullDesc: 'Proper Wealth Day is for steady work - suitable for handling daily tasks and completing established goals. Financial luck is stable today - effort brings rewards. Proper Wealth also represents responsibility - your sense of duty is strong today, suitable for important tasks. Romantically, today is stable and suitable for discussing marriage.',
+        career: 'Work diligently and be recognized by leadership. Suitable for completing routine work steadily. Your efforts will be noticed and may lead to praise or raises.',
+        wealth: 'Stable regular income - more work brings more rewards. Salary income is stable, performance bonuses possible. Focus on steady work rather than speculation.',
+        love: 'Stable relationships - suitable for discussing marriage. Provide security to your partner and discuss future plans. Singles should seek long-term stable relationships.',
+        health: 'Healthy body - maintain regular routines. Proper Wealth days bring stable physical and mental states - establish healthy living habits.'
+    },
+    '七杀': {
+        title: 'Seven Killings Day - Challenge Response Day',
+        shortDesc: 'Seven Killings represents pressure, challenges, authority. Today requires courage.',
+        fullDesc: 'Seven Killings Day brings challenges and pressure but also opportunities for breakthroughs. Today you will face difficulties and competition - remain calm and confident. Seven Killings also represent authority - you may encounter strict superiors or opponents. Maintain a low profile and avoid direct conflict.',
+        career: 'Challenging but breakthrough opportunities exist. Face difficulties bravely and do not retreat. Competitors or strict supervisors may appear - respond calmly.',
+        wealth: 'Risky and unstable - avoid large investments. Today has many variables - financial decisions should be conservative. Ensure basic living expenses.',
+        love: 'Emotional fluctuations - avoid impulsive decisions. Seven Killings days may bring external interference in relationships. Trust your partner and avoid suspicion.',
+        health: 'Stress is high - practice relaxation. Seven Killings days bring mental stress - release it through exercise or meditation. Watch for cardiovascular health.'
+    },
+    '正官': {
+        title: 'Proper Officer Day - Authority Respect Day',
+        shortDesc: 'Proper Officer represents authority, rules, career. Today career luck is strong.',
+        fullDesc: 'Proper Officer Day brings good career luck - suitable for communicating with superiors and handling official matters. Today you easily gain leadership trust and recognition. Proper Officer also represents rules and order - suitable for establishing norms and systems. Romantically, Proper Officer days are stable - suitable for formal commitments.',
+        career: 'Career luck is excellent! Communicate with superiors and take initiative. You may receive important tasks or promotions. Build good relationships with leadership.',
+        wealth: 'Stable income through proper channels. Financial luck is stable today - wealth through legitimate work. Avoid speculation and focus on work.',
+        love: 'Stable and reliable - suitable for serious commitments. Show responsibility to attract stable partners. Existing relationships are harmonious and trustworthy.',
+        health: 'Physical condition is good - maintain healthy habits. Proper Officer days bring disciplined schedules - maintain exercise routines.'
+    },
+    '偏印': {
+        title: 'Side Seal Day - Learning Reflection Day',
+        shortDesc: 'Side Seal represents learning, thinking, solitude. Today is suitable for introspection.',
+        fullDesc: 'Side Seal Day is suitable for studying, thinking, and working alone. Today your thinking is deep and suitable for research and analysis. Side Seal also represents uniqueness - you may have unconventional ideas. However, you tend to overthink today - do not be overly suspicious.',
+        career: 'Suitable for research and analysis work. Deep thinking brings new discoveries. Work independently and avoid excessive socializing.',
+        wealth: 'Financial luck is average - suitable for learning理财知识. Today is not ideal for investments - focus on improving financial literacy and planning.',
+        love: 'Prone to overthinking - maintain open communication. Side Seal days may bring suspicion and worry. Trust your partner and avoid unnecessary doubts.',
+        health: 'Mental stress is high - ensure relaxation. Side Seal days tend toward overthinking - release stress through meditation. Watch for sleep quality.'
+    },
+    '正印': {
+        title: 'Proper Seal Day - Blessing Protection Day',
+        shortDesc: 'Proper Seal represents protection, blessings, learning. Today is blessed with good luck.',
+        fullDesc: 'Proper Seal Day brings blessings and protection - things go smoothly today. Your learning ability is strong - suitable for studying and taking exams. Proper Seal also represents protection - you easily receive help from elders and benefactors. Romantically, Proper Seal days are warm and suitable for building deep connections.',
+        career: 'Blessed with good luck - easily receive help from elders. Suitable for studying and improving skills. Communicate well with superiors and colleagues.',
+        wealth: 'Stable financial luck - protected from loss. Today is blessed - wealth remains stable with help from benefactors. Avoid greed.',
+        love: 'Warm and caring - relationships develop deeply. Proper Seal days bring gentle energy - express care to your partner. Singles attract warm, reliable partners.',
+        health: 'Health is good - suitable for health maintenance. Proper Seal days bring protection - maintain good habits to enhance immunity.'
+    }
+};
+
+// ==================== 英文生肖运势数据 ====================
+const SHENGXIAO_FORTUNE_EN = {
+    '鼠': { desc: 'Intelligent and agile', today: 'Today your thinking is sharp and reactions are quick, suitable for handling complex matters. Seize opportunities and act decisively.' },
+    '牛': { desc: 'Steady and diligent', today: 'Today you are steady and reliable, suitable for completing important tasks. Maintain your pace and success will come.' },
+    '虎': { desc: 'Brave and decisive', today: 'Today you are full of courage and suitable for challenging difficult tasks. Stay confident and move forward boldly.' },
+    '兔': { desc: 'Gentle and kind', today: 'Today you have good relationships and are suitable for social activities. Stay gentle and you will receive help from others.' },
+    '龙': { desc: 'Majestic and energetic', today: 'Today your energy is high and leadership is strong, suitable for leading teams. Seize opportunities to shine.' },
+    '蛇': { desc: 'Wise and thoughtful', today: 'Today your thinking is deep and suitable for analysis and planning. Stay calm and you will make wise decisions.' },
+    '马': { desc: 'Active and passionate', today: 'Today you are full of energy and suitable for outdoor activities. Stay enthusiastic and good opportunities will come.' },
+    '羊': { desc: 'Gentle and kind', today: 'Today your creativity is good and suitable for artistic work. Stay patient and you will receive recognition.' },
+    '猴': { desc: 'Clever and adaptable', today: 'Today you have flexible thinking and suitable for innovative work. Stay smart and you will find good solutions.' },
+    '鸡': { desc: 'Diligent and responsible', today: 'Today you are diligent and recognized by leadership. Stay hardworking and you will be rewarded.' },
+    '狗': { desc: 'Loyal and reliable', today: 'Today you have good teamwork and suitable for collaborative work. Stay sincere and you will win trust.' },
+    '猪': { desc: 'Honest and tolerant', today: 'Today you have good luck and are suitable for enjoying life. Stay optimistic and good fortune will come.' }
+};
+
+// ==================== 英文星座运势数据 ====================
+const XINGZUO_FORTUNE_EN = {
+    '摩羯座': { desc: 'Practical and responsible', today: 'Today your career luck is good, suitable for handling important work. Stay practical and you will be recognized by leadership.' },
+    '水瓶座': { desc: 'Independent and innovative', today: 'Today your creativity is abundant, suitable for innovative projects. Maintain independent thinking and you will have unique insights.' },
+    '双鱼座': { desc: 'Sensitive and romantic', today: 'Today your intuition is sharp, suitable for creative work. Stay sensitive and you will receive inspiration.' },
+    '白羊座': { desc: 'Passionate and direct', today: 'Today you are full of energy, suitable for challenging tasks. Stay passionate and take bold action.' },
+    '金牛座': { desc: 'Steady and persistent', today: 'Today your financial luck is stable, suitable for理财规划. Stay patient and wealth will accumulate.' },
+    '双子座': { desc: 'Clever and adaptable', today: 'Today your communication skills are strong, suitable for social activities. Stay flexible and you will gain new opportunities.' },
+    '巨蟹座': { desc: 'Gentle and family-oriented', today: 'Today your family luck is good, suitable for spending time with family. Stay gentle and enjoy family time.' },
+    '狮子座': { desc: 'Confident and generous', today: 'Today your leadership is strong, suitable for leading teams. Stay confident and you will inspire others.' },
+    '处女座': { desc: 'Detail-oriented and perfect', today: 'Today your attention to detail is good, suitable for precise work. Stay meticulous and you will produce excellent results.' },
+    '天秤座': { desc: 'Harmonious and elegant', today: 'Today your relationships are harmonious, suitable for social activities. Stay elegant and you will be welcomed.' },
+    '天蝎座': { desc: 'Deep and mysterious', today: 'Today your intuition is sharp, suitable for research and investigation. Stay focused and you will discover the truth.' },
+    '射手座': { desc: 'Optimistic and adventurous', today: 'Today your adventurous spirit is strong, suitable for trying new things. Stay optimistic and you will gain new experiences.' }
+};
