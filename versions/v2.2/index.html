@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>潇龙霞大师掐指问天 v2.2</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Noto Serif SC', 'SimSun', serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e4e4e4;
+            padding: 20px;
+            -webkit-text-size-adjust: 100%;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        header { text-align: center; padding: 30px 0; position: relative; }
+        h1 {
+            font-size: 2.2em;
+            background: linear-gradient(45deg, #d4af37, #f4e5c2, #d4af37);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .subtitle { color: #a0a0a0; font-size: 1em; }
+        
+        /* 语言选择器 */
+        .lang-selector {
+            position: absolute;
+            top: 20px;
+            right: 0;
+        }
+        .lang-selector select {
+            padding: 8px 15px;
+            background: rgba(212,175,55,0.2);
+            border: 1px solid rgba(212,175,55,0.5);
+            border-radius: 20px;
+            color: #d4af37;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .input-section {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(212,175,55,0.2);
+        }
+        .section-title {
+            color: #d4af37;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(212,175,55,0.3);
+        }
+        .form-group { margin-bottom: 15px; }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: #d4af37;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid rgba(212,175,55,0.3);
+            border-radius: 8px;
+            background: rgba(0,0,0,0.3);
+            color: #e4e4e4;
+            font-size: 16px;
+            font-family: inherit;
+            min-height: 48px;
+            touch-action: manipulation;
+        }
+        .datetime-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        .datetime-row select {
+            padding-right: 8px;
+        }
+        .gender-row { display: flex; gap: 20px; }
+        .gender-option {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 12px 20px;
+            background: rgba(212,175,55,0.1);
+            border-radius: 20px;
+            flex: 1;
+            justify-content: center;
+            min-height: 48px;
+            -webkit-tap-highlight-color: rgba(212,175,55,0.3);
+        }
+        .gender-option.selected {
+            background: rgba(212,175,55,0.3);
+            border: 1px solid #d4af37;
+        }
+        .gender-option input { width: auto; margin-right: 8px; }
+        
+        button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(45deg, #d4af37, #b8941d);
+            border: none;
+            border-radius: 8px;
+            color: #1a1a2e;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-height: 52px;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: rgba(212,175,55,0.3);
+        }
+        button:hover, button:active {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 25px rgba(212,175,55,0.5);
+        }
+        
+        .result-section { display: none; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .result-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(212,175,55,0.2);
+        }
+        
+        .sizhu-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .sizhu-table th {
+            background: rgba(212,175,55,0.2);
+            padding: 12px;
+            text-align: center;
+            color: #d4af37;
+        }
+        .sizhu-table td {
+            padding: 15px;
+            text-align: center;
+            border: 1px solid rgba(212,175,55,0.1);
+        }
+        .pillar { display: flex; flex-direction: column; gap: 8px; }
+        .gan, .zhi { font-size: 1.6em; font-weight: bold; }
+        .gan { color: #f4e5c2; }
+        .zhi { color: #e4e4e4; }
+        .wuxing-tag {
+            font-size: 0.8em;
+            padding: 3px 8px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        .wuxing-jin { background: rgba(255,215,0,0.3); color: #ffd700; }
+        .wuxing-mu { background: rgba(0,255,0,0.3); color: #90ee90; }
+        .wuxing-shui { background: rgba(0,191,255,0.3); color: #87ceeb; }
+        .wuxing-huo { background: rgba(255,69,0,0.3); color: #ff6347; }
+        .wuxing-tu { background: rgba(139,69,19,0.3); color: #deb887; }
+        
+        .detail-box {
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 4px solid #d4af37;
+        }
+        .detail-box h4 {
+            color: #d4af37;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+        }
+        .detail-content {
+            line-height: 1.9;
+            color: #d0d0d0;
+            text-align: justify;
+        }
+        
+        .score-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .score-item {
+            text-align: center;
+            padding: 15px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+        }
+        .score-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #d4af37;
+        }
+        .score-label { font-size: 0.9em; color: #a0a0a0; margin-top: 5px; }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        
+        .yiji-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 15px;
+        }
+        .yi-area, .ji-area {
+            padding: 15px;
+            border-radius: 10px;
+        }
+        .yi-area { background: rgba(0,255,0,0.1); border: 1px solid rgba(0,255,0,0.3); }
+        .ji-area { background: rgba(255,0,0,0.1); border: 1px solid rgba(255,0,0,0.3); }
+        .yi-area h4 { color: #90ee90; margin-bottom: 10px; }
+        .ji-area h4 { color: #ff6b6b; margin-bottom: 10px; }
+        .yiji-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+        .yiji-tag {
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+        }
+        .yi-area .yiji-tag { background: rgba(0,255,0,0.2); color: #90ee90; }
+        .ji-area .yiji-tag { background: rgba(255,0,0,0.2); color: #ff6b6b; }
+        
+        .extra-fortune {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .extra-card {
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+            padding: 15px;
+        }
+        .extra-card h4 {
+            color: #d4af37;
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+        .extra-content {
+            font-size: 0.9em;
+            color: #b0b0b0;
+            line-height: 1.7;
+        }
+        
+        .divination-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .divination-tab {
+            flex: 1 1 calc(50% - 10px);
+            padding: 12px 15px;
+            background: rgba(212,175,55,0.1);
+            border: 1px solid rgba(212,175,55,0.3);
+            border-radius: 8px;
+            color: #d4af37;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            -webkit-tap-highlight-color: rgba(212,175,55,0.3);
+        }
+        .divination-tab:hover, .divination-tab.active {
+            background: rgba(212,175,55,0.3);
+            border-color: #d4af37;
+        }
+        
+        .tarot-cards {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .tarot-card {
+            width: 120px;
+            background: linear-gradient(135deg, rgba(212,175,55,0.2), rgba(212,175,55,0.05));
+            border: 1px solid rgba(212,175,55,0.3);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+        .tarot-card .position {
+            font-size: 0.85em;
+            color: #d4af37;
+            margin-bottom: 8px;
+        }
+        .tarot-card .name {
+            font-weight: bold;
+            color: #f4e5c2;
+            margin-bottom: 5px;
+        }
+        .tarot-card .orientation {
+            font-size: 0.8em;
+            color: #a0a0a0;
+        }
+        
+        .chouqian-container {
+            text-align: center;
+            padding: 20px 0;
+        }
+        .qian-container {
+            display: none;
+            margin-top: 20px;
+            padding: 25px;
+            background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(212,175,55,0.05));
+            border: 1px solid rgba(212,175,55,0.3);
+            border-radius: 12px;
+        }
+        .qian-number {
+            font-size: 3em;
+            color: #d4af37;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .change-fate-section {
+            background: linear-gradient(135deg, rgba(255,0,0,0.1), rgba(128,0,128,0.1));
+            border: 2px solid rgba(255,0,0,0.3);
+            border-radius: 16px;
+            padding: 25px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .change-fate-section h3 {
+            color: #ff6b6b;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+        .fate-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .fate-option {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(212,175,55,0.3);
+            border-radius: 12px;
+            padding: 20px 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-height: 100px;
+            -webkit-tap-highlight-color: rgba(212,175,55,0.3);
+        }
+        .fate-option:hover, .fate-option:active {
+            transform: translateY(-3px);
+            border-color: #d4af37;
+            background: rgba(212,175,55,0.15);
+        }
+        .fate-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .fate-name {
+            color: #d4af37;
+            font-weight: bold;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 40px 20px 20px;
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        /* 专项问事样式 */
+        .question-categories {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .category-card {
+            background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(212,175,55,0.05));
+            border: 1px solid rgba(212,175,55,0.3);
+            border-radius: 12px;
+            padding: 20px 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            -webkit-tap-highlight-color: rgba(212,175,55,0.3);
+        }
+        .category-card:hover, .category-card:active {
+            transform: translateY(-3px);
+            border-color: #d4af37;
+            background: rgba(212,175,55,0.2);
+        }
+        .category-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .category-name {
+            color: #d4af37;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+        .category-desc {
+            font-size: 0.85em;
+            color: #888;
+        }
+        
+        .question-detail {
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 15px;
+        }
+        .question-list {
+            display: grid;
+            gap: 10px;
+        }
+        .question-item {
+            background: rgba(212,175,55,0.1);
+            border: 1px solid rgba(212,175,55,0.2);
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.95em;
+            -webkit-tap-highlight-color: rgba(212,175,55,0.3);
+        }
+        .question-item:hover, .question-item:active {
+            background: rgba(212,175,55,0.2);
+            border-color: #d4af37;
+        }
+        .specific-answer {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(212,175,55,0.1);
+            border-radius: 10px;
+            border-left: 4px solid #d4af37;
+            line-height: 1.8;
+        }
+        
+        @media (max-width: 768px) {
+            .question-categories {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* 移动端优化 */
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            h1 { font-size: 1.5em; }
+            .lang-selector {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin-bottom: 15px;
+                text-align: center;
+            }
+            .input-section { padding: 20px 15px; }
+            .datetime-row { gap: 8px; }
+            .gender-row { gap: 15px; }
+            .extra-fortune { grid-template-columns: 1fr; }
+            .yiji-box { grid-template-columns: 1fr; }
+        }
+        
+        /* iOS 修复 */
+        @supports (-webkit-touch-callout: none) {
+            select, input, button {
+                font-size: 16px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="lang-selector">
+                <select id="langSelect" onchange="changeLanguage()">
+                    <option value="zh">中文</option>
+                    <option value="en">English</option>
+                    <option value="ar">العربية</option>
+                    <option value="ru">Русский</option>
+                </select>
+            </div>
+            
+            <h1 id="pageTitle">潇龙霞大师掐指问天</h1>
+            <p class="subtitle" id="pageSubtitle">八字命理 · 详细解读 · 多语言支持</p>
+        </header>
+        
+        <!-- 出生信息 -->
+        <div class="input-section">
+            <div class="section-title" id="birthInfoTitle">出生信息</div>
+            
+            <div class="form-group">
+                <label id="birthDateLabel">出生日期（阳历）</label>
+                <div class="datetime-row">
+                    <select id="birthYear"><option value="">年</option><option value="1900">1900</option><option value="1901">1901</option><option value="1902">1902</option><option value="1903">1903</option><option value="1904">1904</option><option value="1905">1905</option><option value="1906">1906</option><option value="1907">1907</option><option value="1908">1908</option><option value="1909">1909</option><option value="1910">1910</option><option value="1911">1911</option><option value="1912">1912</option><option value="1913">1913</option><option value="1914">1914</option><option value="1915">1915</option><option value="1916">1916</option><option value="1917">1917</option><option value="1918">1918</option><option value="1919">1919</option><option value="1920">1920</option><option value="1921">1921</option><option value="1922">1922</option><option value="1923">1923</option><option value="1924">1924</option><option value="1925">1925</option><option value="1926">1926</option><option value="1927">1927</option><option value="1928">1928</option><option value="1929">1929</option><option value="1930">1930</option><option value="1931">1931</option><option value="1932">1932</option><option value="1933">1933</option><option value="1934">1934</option><option value="1935">1935</option><option value="1936">1936</option><option value="1937">1937</option><option value="1938">1938</option><option value="1939">1939</option><option value="1940">1940</option><option value="1941">1941</option><option value="1942">1942</option><option value="1943">1943</option><option value="1944">1944</option><option value="1945">1945</option><option value="1946">1946</option><option value="1947">1947</option><option value="1948">1948</option><option value="1949">1949</option><option value="1950">1950</option><option value="1951">1951</option><option value="1952">1952</option><option value="1953">1953</option><option value="1954">1954</option><option value="1955">1955</option><option value="1956">1956</option><option value="1957">1957</option><option value="1958">1958</option><option value="1959">1959</option><option value="1960">1960</option><option value="1961">1961</option><option value="1962">1962</option><option value="1963">1963</option><option value="1964">1964</option><option value="1965">1965</option><option value="1966">1966</option><option value="1967">1967</option><option value="1968">1968</option><option value="1969">1969</option><option value="1970">1970</option><option value="1971">1971</option><option value="1972">1972</option><option value="1973">1973</option><option value="1974">1974</option><option value="1975">1975</option><option value="1976">1976</option><option value="1977">1977</option><option value="1978">1978</option><option value="1979">1979</option><option value="1980">1980</option><option value="1981">1981</option><option value="1982">1982</option><option value="1983">1983</option><option value="1984">1984</option><option value="1985">1985</option><option value="1986">1986</option><option value="1987">1987</option><option value="1988">1988</option><option value="1989">1989</option><option value="1990">1990</option><option value="1991">1991</option><option value="1992">1992</option><option value="1993">1993</option><option value="1994">1994</option><option value="1995">1995</option><option value="1996">1996</option><option value="1997">1997</option><option value="1998">1998</option><option value="1999">1999</option><option value="2000">2000</option><option value="2001">2001</option><option value="2002">2002</option><option value="2003">2003</option><option value="2004">2004</option><option value="2005">2005</option><option value="2006">2006</option><option value="2007">2007</option><option value="2008">2008</option><option value="2009">2009</option><option value="2010">2010</option><option value="2011">2011</option><option value="2012">2012</option><option value="2013">2013</option><option value="2014">2014</option><option value="2015">2015</option><option value="2016">2016</option><option value="2017">2017</option><option value="2018">2018</option><option value="2019">2019</option><option value="2020">2020</option><option value="2021">2021</option><option value="2022">2022</option><option value="2023">2023</option><option value="2024">2024</option><option value="2025" selected>2025</option><option value="2026">2026</option><option value="2027">2027</option><option value="2028">2028</option><option value="2029">2029</option><option value="2030">2030</option><option value="2031">2031</option><option value="2032">2032</option><option value="2033">2033</option><option value="2034">2034</option><option value="2035">2035</option><option value="2036">2036</option><option value="2037">2037</option><option value="2038">2038</option><option value="2039">2039</option><option value="2040">2040</option><option value="2041">2041</option><option value="2042">2042</option><option value="2043">2043</option><option value="2044">2044</option><option value="2045">2045</option><option value="2046">2046</option><option value="2047">2047</option><option value="2048">2048</option><option value="2049">2049</option><option value="2050">2050</option><option value="2051">2051</option><option value="2052">2052</option><option value="2053">2053</option><option value="2054">2054</option><option value="2055">2055</option><option value="2056">2056</option><option value="2057">2057</option><option value="2058">2058</option><option value="2059">2059</option><option value="2060">2060</option><option value="2061">2061</option><option value="2062">2062</option><option value="2063">2063</option><option value="2064">2064</option><option value="2065">2065</option><option value="2066">2066</option><option value="2067">2067</option><option value="2068">2068</option><option value="2069">2069</option><option value="2070">2070</option><option value="2071">2071</option><option value="2072">2072</option><option value="2073">2073</option><option value="2074">2074</option><option value="2075">2075</option><option value="2076">2076</option><option value="2077">2077</option><option value="2078">2078</option><option value="2079">2079</option><option value="2080">2080</option><option value="2081">2081</option><option value="2082">2082</option><option value="2083">2083</option><option value="2084">2084</option><option value="2085">2085</option><option value="2086">2086</option><option value="2087">2087</option><option value="2088">2088</option><option value="2089">2089</option><option value="2090">2090</option><option value="2091">2091</option><option value="2092">2092</option><option value="2093">2093</option><option value="2094">2094</option><option value="2095">2095</option><option value="2096">2096</option><option value="2097">2097</option><option value="2098">2098</option><option value="2099">2099</option><option value="2100">2100</option></select>
+                    <select id="birthMonth">
+                        <option value="">月</option>
+                        <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+                        <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+                        <option value="7">7</option><option value="8">8</option><option value="9">9</option>
+                        <option value="10">10</option><option value="11">11</option><option value="12">12</option>
+                    </select>
+                    <select id="birthDay"><option value="">日</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option><option value="24">24</option><option value="25">25</option><option value="26">26</option><option value="27">27</option><option value="28">28</option><option value="29">29</option><option value="30">30</option><option value="31">31</option></select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label id="birthTimeLabel">出生时间</label>
+                <div class="datetime-row">
+                    <select id="birthHour"><option value="">时</option><option value="0">0时</option><option value="1">1时</option><option value="2">2时</option><option value="3">3时</option><option value="4">4时</option><option value="5">5时</option><option value="6">6时</option><option value="7">7时</option><option value="8">8时</option><option value="9">9时</option><option value="10">10时</option><option value="11">11时</option><option value="12" selected>12时</option><option value="13">13时</option><option value="14">14时</option><option value="15">15时</option><option value="16">16时</option><option value="17">17时</option><option value="18">18时</option><option value="19">19时</option><option value="20">20时</option><option value="21">21时</option><option value="22">22时</option><option value="23">23时</option></select>
+                    <select id="birthMinute">
+                        <option value="0">00分</option>
+                        <option value="15">15分</option>
+                        <option value="30">30分</option>
+                        <option value="45">45分</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label id="genderLabel">性别</label>
+                <div class="gender-row">
+                    <label class="gender-option selected" onclick="selectGender(this, 'male')">
+                        <input type="radio" name="gender" value="male" checked>
+                        <span id="maleText">男</span>
+                    </label>
+                    <label class="gender-option" onclick="selectGender(this, 'female')">
+                        <input type="radio" name="gender" value="female">
+                        <span id="femaleText">女</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 测算日期 -->
+        <div class="input-section">
+            <div class="section-title" id="targetDateTitle">测算日期</div>
+            
+            <div class="form-group">
+                <label id="targetDateLabel">要测算的日期</label>
+                <div class="datetime-row">
+                    <select id="targetYear"><option value="">年</option><option value="1900">1900</option><option value="1901">1901</option><option value="1902">1902</option><option value="1903">1903</option><option value="1904">1904</option><option value="1905">1905</option><option value="1906">1906</option><option value="1907">1907</option><option value="1908">1908</option><option value="1909">1909</option><option value="1910">1910</option><option value="1911">1911</option><option value="1912">1912</option><option value="1913">1913</option><option value="1914">1914</option><option value="1915">1915</option><option value="1916">1916</option><option value="1917">1917</option><option value="1918">1918</option><option value="1919">1919</option><option value="1920">1920</option><option value="1921">1921</option><option value="1922">1922</option><option value="1923">1923</option><option value="1924">1924</option><option value="1925">1925</option><option value="1926">1926</option><option value="1927">1927</option><option value="1928">1928</option><option value="1929">1929</option><option value="1930">1930</option><option value="1931">1931</option><option value="1932">1932</option><option value="1933">1933</option><option value="1934">1934</option><option value="1935">1935</option><option value="1936">1936</option><option value="1937">1937</option><option value="1938">1938</option><option value="1939">1939</option><option value="1940">1940</option><option value="1941">1941</option><option value="1942">1942</option><option value="1943">1943</option><option value="1944">1944</option><option value="1945">1945</option><option value="1946">1946</option><option value="1947">1947</option><option value="1948">1948</option><option value="1949">1949</option><option value="1950">1950</option><option value="1951">1951</option><option value="1952">1952</option><option value="1953">1953</option><option value="1954">1954</option><option value="1955">1955</option><option value="1956">1956</option><option value="1957">1957</option><option value="1958">1958</option><option value="1959">1959</option><option value="1960">1960</option><option value="1961">1961</option><option value="1962">1962</option><option value="1963">1963</option><option value="1964">1964</option><option value="1965">1965</option><option value="1966">1966</option><option value="1967">1967</option><option value="1968">1968</option><option value="1969">1969</option><option value="1970">1970</option><option value="1971">1971</option><option value="1972">1972</option><option value="1973">1973</option><option value="1974">1974</option><option value="1975">1975</option><option value="1976">1976</option><option value="1977">1977</option><option value="1978">1978</option><option value="1979">1979</option><option value="1980">1980</option><option value="1981">1981</option><option value="1982">1982</option><option value="1983">1983</option><option value="1984">1984</option><option value="1985">1985</option><option value="1986">1986</option><option value="1987">1987</option><option value="1988">1988</option><option value="1989">1989</option><option value="1990">1990</option><option value="1991">1991</option><option value="1992">1992</option><option value="1993">1993</option><option value="1994">1994</option><option value="1995">1995</option><option value="1996">1996</option><option value="1997">1997</option><option value="1998">1998</option><option value="1999">1999</option><option value="2000">2000</option><option value="2001">2001</option><option value="2002">2002</option><option value="2003">2003</option><option value="2004">2004</option><option value="2005">2005</option><option value="2006">2006</option><option value="2007">2007</option><option value="2008">2008</option><option value="2009">2009</option><option value="2010">2010</option><option value="2011">2011</option><option value="2012">2012</option><option value="2013">2013</option><option value="2014">2014</option><option value="2015">2015</option><option value="2016">2016</option><option value="2017">2017</option><option value="2018">2018</option><option value="2019">2019</option><option value="2020">2020</option><option value="2021">2021</option><option value="2022">2022</option><option value="2023">2023</option><option value="2024">2024</option><option value="2025" selected>2025</option><option value="2026">2026</option><option value="2027">2027</option><option value="2028">2028</option><option value="2029">2029</option><option value="2030">2030</option><option value="2031">2031</option><option value="2032">2032</option><option value="2033">2033</option><option value="2034">2034</option><option value="2035">2035</option><option value="2036">2036</option><option value="2037">2037</option><option value="2038">2038</option><option value="2039">2039</option><option value="2040">2040</option><option value="2041">2041</option><option value="2042">2042</option><option value="2043">2043</option><option value="2044">2044</option><option value="2045">2045</option><option value="2046">2046</option><option value="2047">2047</option><option value="2048">2048</option><option value="2049">2049</option><option value="2050">2050</option><option value="2051">2051</option><option value="2052">2052</option><option value="2053">2053</option><option value="2054">2054</option><option value="2055">2055</option><option value="2056">2056</option><option value="2057">2057</option><option value="2058">2058</option><option value="2059">2059</option><option value="2060">2060</option><option value="2061">2061</option><option value="2062">2062</option><option value="2063">2063</option><option value="2064">2064</option><option value="2065">2065</option><option value="2066">2066</option><option value="2067">2067</option><option value="2068">2068</option><option value="2069">2069</option><option value="2070">2070</option><option value="2071">2071</option><option value="2072">2072</option><option value="2073">2073</option><option value="2074">2074</option><option value="2075">2075</option><option value="2076">2076</option><option value="2077">2077</option><option value="2078">2078</option><option value="2079">2079</option><option value="2080">2080</option><option value="2081">2081</option><option value="2082">2082</option><option value="2083">2083</option><option value="2084">2084</option><option value="2085">2085</option><option value="2086">2086</option><option value="2087">2087</option><option value="2088">2088</option><option value="2089">2089</option><option value="2090">2090</option><option value="2091">2091</option><option value="2092">2092</option><option value="2093">2093</option><option value="2094">2094</option><option value="2095">2095</option><option value="2096">2096</option><option value="2097">2097</option><option value="2098">2098</option><option value="2099">2099</option><option value="2100">2100</option></select>
+                    <select id="targetMonth">
+                        <option value="">月</option>
+                        <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+                        <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+                        <option value="7">7</option><option value="8">8</option><option value="9">9</option>
+                        <option value="10">10</option><option value="11">11</option><option value="12">12</option>
+                    </select>
+                    <select id="targetDay"><option value="">日</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option><option value="24">24</option><option value="25">25</option><option value="26">26</option><option value="27">27</option><option value="28">28</option><option value="29">29</option><option value="30">30</option><option value="31">31</option></select>
+                </div>
+            </div>
+        </div>
+        
+        <button onclick="calculateAll()" id="calcBtn">开始测算</button>
+        
+        <!-- 结果区域 -->
+        <div class="result-section" id="result">
+            
+            <!-- 八字命盘 -->
+            <div class="result-card">
+                <div class="section-title" id="baziChartTitle">八字命盘</div>
+                <table class="sizhu-table">
+                    <tr>
+                        <th id="yearPillarLabel">年柱</th>
+                        <th id="monthPillarLabel">月柱</th>
+                        <th id="dayPillarLabel">日柱</th>
+                        <th id="hourPillarLabel">时柱</th>
+                    </tr>
+                    <tr id="sizhuRow"></tr>
+                </table>
+            </div>
+            
+            <!-- 详细解读 -->
+            <div class="result-card">
+                <div class="section-title" id="detailReadingTitle">详细解读</div>
+                
+                <div class="detail-box">
+                    <h4 id="readingTitle">日主关系分析</h4>
+                    <div class="detail-content" id="readingContent"></div>
+                </div>
+                
+                <div class="detail-box">
+                    <h4 id="careerTitle">事业运势详解</h4>
+                    <div class="detail-content" id="careerDetail"></div>
+                </div>
+                
+                <div class="detail-box">
+                    <h4 id="wealthTitle">财运详解</h4>
+                    <div class="detail-content" id="wealthDetail"></div>
+                </div>
+                
+                <div class="detail-box">
+                    <h4 id="loveTitle">感情运势详解</h4>
+                    <div class="detail-content" id="loveDetail"></div>
+                </div>
+                
+                <div class="detail-box">
+                    <h4 id="healthTitle">健康提示</h4>
+                    <div class="detail-content" id="healthDetail"></div>
+                </div>
+            </div>
+            
+            <!-- 运势评分 -->
+            <div class="result-card">
+                <div class="section-title" id="fortuneScoreTitle">今日运势评分</div>
+                <div class="score-grid" id="scoreGrid"></div>
+            </div>
+            
+            <!-- 黄历宜忌 -->
+            <div class="result-card">
+                <div class="section-title" id="almanacTitle">黄历宜忌</div>
+                
+                <div class="yiji-box">
+                    <div class="yi-area">
+                        <h4 id="yiTitle">宜</h4>
+                        <div class="yiji-tags" id="yiTags"></div>
+                    </div>
+                    
+                    <div class="ji-area">
+                        <h4 id="jiTitle">忌</h4>
+                        <div class="yiji-tags" id="jiTags"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 更多运势 -->
+            <div class="result-card">
+                <div class="section-title" id="moreFortuneTitle">更多运势</div>
+                
+                <div class="extra-fortune">
+                    <div class="extra-card">
+                        <h4 id="shengxiaoTitle">生肖运势</h4>
+                        <div class="extra-content" id="shengxiaoFortune"></div>
+                    </div>
+                    
+                    <div class="extra-card">
+                        <h4 id="xingzuoTitle">星座运势</h4>
+                        <div class="extra-content" id="xingzuoFortune"></div>
+                    </div>
+                    
+                    <div class="extra-card">
+                        <h4 id="wuxingTitle">五行分析</h4>
+                        <div class="extra-content" id="wuxingAnalysis"></div>
+                    </div>
+                    
+                    <div class="extra-card">
+                        <h4 id="dayunTitle">大运简批</h4>
+                        <div class="extra-content" id="dayunSimple"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 专项问事 -->
+            <div class="result-card" id="specialQuestionsSection">
+                <div class="section-title">🎯 专项问事</div>
+                <p style="color: #a0a0a0; margin-bottom: 15px;">选择您最关心的领域，获取针对性解答</p>
+                
+                <div class="question-categories">
+                    <div class="category-card" onclick="showCategory('love')">
+                        <div class="category-icon">💕</div>
+                        <div class="category-name">问姻缘</div>
+                        <div class="category-desc">桃花、正缘、复合、婚姻</div>
+                    </div>
+                    
+                    <div class="category-card" onclick="showCategory('wealth')">
+                        <div class="category-icon">💰</div>
+                        <div class="category-name">问财运</div>
+                        <div class="category-desc">正财、偏财、投资、跳槽</div>
+                    </div>
+                    
+                    <div class="category-card" onclick="showCategory('danger')">
+                        <div class="category-icon">⚠️</div>
+                        <div class="category-name">问凶吉</div>
+                        <div class="category-desc">出行、签约、健康、口舌</div>
+                    </div>
+                </div>
+                
+                <!-- 姻缘问题详细 -->
+                <div id="loveQuestions" class="question-detail" style="display: none;">
+                    <h4 style="color: #d4af37; margin: 20px 0 15px;">💕 姻缘相关问题</h4>
+                    <div class="question-list">
+                        <div class="question-item" onclick="askSpecific('love', 'single')">🌸 我何时能遇到正缘？</div>
+                        <div class="question-item" onclick="askSpecific('love', 'crush')">💌 我喜欢的人对我有感觉吗？</div>
+                        <div class="question-item" onclick="askSpecific('love', 'breakup')">💔 我们能复合吗？</div>
+                        <div class="question-item" onclick="askSpecific('love', 'marriage')">💍 今年适合结婚吗？</div>
+                        <div class="question-item" onclick="askSpecific('love', 'stable')">🏠 我们的婚姻会稳定吗？</div>
+                    </div>
+                    <div id="loveAnswer" class="specific-answer"></div>
+                </div>
+                
+                <!-- 财运问题详细 -->
+                <div id="wealthQuestions" class="question-detail" style="display: none;">
+                    <h4 style="color: #d4af37; margin: 20px 0 15px;">💰 财运相关问题</h4>
+                    <div class="question-list">
+                        <div class="question-item" onclick="askSpecific('wealth', 'salary')">💵 今年能涨薪吗？</div>
+                        <div class="question-item" onclick="askSpecific('wealth', 'invest')">📈 现在适合投资吗？</div>
+                        <div class="question-item" onclick="askSpecific('wealth', 'job')">🔄 跳槽会更有钱途吗？</div>
+                        <div class="question-item" onclick="askSpecific('wealth', 'side')">💎 适合搞副业吗？</div>
+                        <div class="question-item" onclick="askSpecific('wealth', 'windfall')">🎰 有偏财运吗？</div>
+                    </div>
+                    <div id="wealthAnswer" class="specific-answer"></div>
+                </div>
+                
+                <!-- 凶吉问题详细 -->
+                <div id="dangerQuestions" class="question-detail" style="display: none;">
+                    <h4 style="color: #d4af37; margin: 20px 0 15px;">⚠️ 凶吉相关问题</h4>
+                    <div class="question-list">
+                        <div class="question-item" onclick="askSpecific('danger', 'travel')">✈️ 近期出行安全吗？</div>
+                        <div class="question-item" onclick="askSpecific('danger', 'contract')">📝 签约谈判顺利吗？</div>
+                        <div class="question-item" onclick="askSpecific('danger', 'health')">🏥 需要注意健康问题吗？</div>
+                        <div class="question-item" onclick="askSpecific('danger', 'lawsuit')">⚖️ 官司口舌能化解吗？</div>
+                        <div class="question-item" onclick="askSpecific('danger', 'accident')">🚗 有血光之灾吗？</div>
+                    </div>
+                    <div id="dangerAnswer" class="specific-answer"></div>
+                </div>
+            </div>
+            
+            <!-- 更多占卜方式 -->
+            <div class="result-card" id="moreDivinationSection">
+                <div class="section-title">🔮 更多占卜方式</div>
+                <p style="color: #a0a0a0; margin-bottom: 15px;">传统占卜工具，辅助决策参考</p>
+                
+                <div class="divination-tabs">
+                    <div class="divination-tab active" onclick="switchDivination('tarot', this)">🔮 塔罗牌</div>
+                    <div class="divination-tab" onclick="switchDivination('chouqian', this)">🎋 观音灵签</div>
+                    <div class="divination-tab" onclick="switchDivination('zhouyi', this)">☯️ 周易起卦</div>
+                    <div class="divination-tab" onclick="switchDivination('xingzuo', this)">⭐ 星盘占卜</div>
+                </div>
+                
+                <!-- 塔罗牌区域 -->
+                <div id="tarotDivination">
+                    <div class="form-group">
+                        <label>你想问什么问题？</label>
+                        <input type="text" id="tarotQuestion" placeholder="如：今天适合表白吗？这份工作要不要接受？">
+                    </div>
+                    
+                    <div style="text-align: center; margin: 20px 0;">
+                        <button onclick="drawTarot()" style="width: auto; padding: 15px 40px;">抽取塔罗牌</button>
+                    </div>
+                    
+                    <div id="tarotResult" style="display: none;">
+                        <div class="tarot-cards" id="tarotCardsContainer"></div>
+                        <div id="tarotReading"></div>
+                    </div>
+                </div>
+                
+                <!-- 观音灵签区域 -->
+                <div id="chouqianDivination" style="display: none;">
+                    <div class="chouqian-container">
+                        <p style="color: #a0a0a0; margin-bottom: 20px;">诚心默念所求之事，然后点击抽签</p>
+                        
+                        <button onclick="drawQian()" style="width: auto; padding: 15px 50px;">🎋 抽签</button>
+                        
+                        <div class="qian-container" id="qianResult">
+                            <div class="qian-number" id="qianNumber"></div>
+                            <div style="font-size: 1.3em; color: #d4af37; margin: 10px 0;" id="qianTitle"></div>
+                            <div style="font-style: italic; color: #f4e5c2; margin: 15px 0; line-height: 1.8;" id="qianPoem"></div>
+                            <div style="color: #a0a0a0; line-height: 1.7;" id="qianMeaning"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 周易起卦区域 -->
+                <div id="zhouyiDivination" style="display: none;">
+                    <div style="text-align: center; padding: 30px;">
+                        <p style="color: #a0a0a0; margin-bottom: 20px;">心中默念所问之事，点击起卦</p>
+                        
+                        <button onclick="drawZhouyi()" style="width: auto; padding: 15px 50px;">☯️ 起卦</button>
+                        
+                        <div id="zhouyiResult" style="display: none; margin-top: 20px; padding: 20px; background: rgba(212,175,55,0.1); border-radius: 12px; border: 1px solid rgba(212,175,55,0.3);">
+                            <div style="font-size: 1.5em; color: #d4af37; font-weight: bold; margin-bottom: 10px;" id="guaName"></div>
+                            <div style="font-size: 1.2em; color: #f4e5c2; margin: 15px 0;" id="guaText"></div>
+                            <div style="color: #a0a0a0; line-height: 1.8; text-align: left;" id="guaMeaning"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 星盘占卜区域 -->
+                <div id="xingzuoDivination" style="display: none;">
+                    <div style="text-align: center; padding: 30px;">
+                        <p style="color: #a0a0a0; margin-bottom: 20px;">基于你的出生星盘和今日星象</p>
+                        
+                        <button onclick="drawXingpan()" style="width: auto; padding: 15px 50px;">⭐ 查看星盘指引</button>
+                        
+                        <div id="xingpanResult" style="display: none; margin-top: 20px;">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;" id="xingpanGrid"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 逆天改命 -->
+            <div class="change-fate-section" id="changeFateSection">
+                <h3>🔥 要不要逆天改命？</h3>
+                <p style="color: #a0a0a0;">运势不佳？选择以下方式转运：</p>
+                
+                <div class="fate-options">
+                    <div class="fate-option" onclick="selectFate('fuzhou')">
+                        <div class="fate-icon">📜</div>
+                        <div class="fate-name">请符咒</div>
+                        <div style="font-size: 0.85em; color: #888;">道教灵符</div>
+                    </div>
+                    
+                    <div class="fate-option" onclick="selectFate('buddha')">
+                        <div class="fate-icon">🙏</div>
+                        <div class="fate-name">请佛像</div>
+                        <div style="font-size: 0.85em; color: #888;">观音菩萨</div>
+                    </div>
+                    
+                    <div class="fate-option" onclick="selectFate('jesus')">
+                        <div class="fate-icon">✝️</div>
+                        <div class="fate-name">请耶稣像</div>
+                        <div style="font-size: 0.85em; color: #888;">基督保佑</div>
+                    </div>
+                    
+                    <div class="fate-option" onclick="selectFate('crystal')">
+                        <div class="fate-icon">💎</div>
+                        <div class="fate-name">请水晶</div>
+                        <div style="font-size: 0.85em; color: #888;">能量石</div>
+                    </div>
+                </div>
+                
+                <div class="fate-result" id="fateResult"></div>
+            </div>
+            
+        </div>
+        
+        <div class="footer">
+            <p id="footerText">第三阶段 · 八字黄历 v2.2 · 专项问事版</p>
+            <p><a href="https://github.com/ssjjpp-tz/simacount" target="_blank">Powered by 潇龙霞</a></p>
+        </div>
+    </div>
+    
+    <script src="bazi-v2.2.js"></script>
+    <script>
+        // 兜底：确保按钮能工作
+        document.addEventListener('DOMContentLoaded', function() {
+            var btn = document.getElementById('calcBtn');
+            if (btn) {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (typeof calculateAll === 'function') {
+                        calculateAll();
+                    } else {
+                        alert('函数未加载，请刷新页面');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
