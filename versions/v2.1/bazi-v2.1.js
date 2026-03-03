@@ -511,6 +511,9 @@ function getXingZuo(month, day) {
 
 // ==================== 主计算函数 ====================
 function calculateAll() {
+    // 先测试按钮是否能触发
+    alert('按钮被点击了，正在计算...');
+    
     try {
         const birthYear = parseInt(document.getElementById('birthYear').value);
         const birthMonth = parseInt(document.getElementById('birthMonth').value);
@@ -552,6 +555,8 @@ function calculateAll() {
         
         // 显示结果
         displayResults(sizhu, reading, scores, birthYear, birthMonth, birthDay);
+        
+        alert('计算完成！');
     } catch (error) {
         console.error('Calculate error:', error);
         alert('计算出错: ' + error.message);
