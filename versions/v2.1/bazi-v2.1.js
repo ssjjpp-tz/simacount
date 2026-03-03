@@ -525,6 +525,11 @@ function calculateAll() {
         return;
     }
     
+    if (!targetYear || !targetMonth || !targetDay) {
+        alert('请填写完整的测算日期');
+        return;
+    }
+    
     // 计算八字
     const yearPillar = getYearPillar(birthYear);
     const monthPillar = getMonthPillar(birthYear, birthMonth, yearPillar.ganIndex);
