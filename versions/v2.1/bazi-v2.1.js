@@ -391,14 +391,12 @@ function updatePageText() {
 function init() {
     const now = new Date();
     
-    // 填充年份选择器 (1900-2100)
-    fillYearOptions('birthYear', now.getFullYear());
-    fillYearOptions('targetYear', now.getFullYear());
+    // 设置默认值（HTML中已静态写入所有选项）
+    setSelectValue('birthYear', now.getFullYear());
+    setSelectValue('targetYear', now.getFullYear());
+    setSelectValue('birthHour', now.getHours());
     
-    // 填充小时选择器 (0-23)
-    fillHourOptions('birthHour', now.getHours());
-    
-    // 初始化日期选择器
+    // 初始化日期选择器（仅设置月份和日期联动）
     initDateSelect('birthYear', 'birthMonth', 'birthDay', now.getFullYear(), now.getMonth() + 1, now.getDate());
     initDateSelect('targetYear', 'targetMonth', 'targetDay', now.getFullYear(), now.getMonth() + 1, now.getDate());
     
@@ -412,28 +410,10 @@ function init() {
     });
 }
 
-// 填充年份选项
-function fillYearOptions(yearId, defaultYear) {
-    const yearSelect = document.getElementById(yearId);
-    if (!yearSelect) return;
-    
-    let options = '<option value="">年</option>';
-    for (let y = 1900; y <= 2100; y++) {
-        options += `<option value="${y}"${y === defaultYear ? ' selected' : ''}>${y}</option>`;
-    }
-    yearSelect.innerHTML = options;
-}
-
-// 填充小时选项
-function fillHourOptions(hourId, defaultHour) {
-    const hourSelect = document.getElementById(hourId);
-    if (!hourSelect) return;
-    
-    let options = '<option value="">时</option>';
-    for (let h = 0; h <= 23; h++) {
-        options += `<option value="${h}"${h === defaultHour ? ' selected' : ''}>${h}时</option>`;
-    }
-    hourSelect.innerHTML = options;
+// 设置选择器默认值
+function setSelectValue(id, value) {
+    const select = document.getElementById(id);
+    if (select) select.value = value;
 }
 
 function initDateSelect(yearId, monthId, dayId, defaultYear, defaultMonth, defaultDay) {
