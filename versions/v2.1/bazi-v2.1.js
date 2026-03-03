@@ -511,46 +511,51 @@ function getXingZuo(month, day) {
 
 // ==================== 主计算函数 ====================
 function calculateAll() {
-    const birthYear = parseInt(document.getElementById('birthYear').value);
-    const birthMonth = parseInt(document.getElementById('birthMonth').value);
-    const birthDay = parseInt(document.getElementById('birthDay').value);
-    const birthHour = parseInt(document.getElementById('birthHour').value);
-    const gender = document.querySelector('input[name="gender"]:checked').value;
-    const targetYear = parseInt(document.getElementById('targetYear').value);
-    const targetMonth = parseInt(document.getElementById('targetMonth').value);
-    const targetDay = parseInt(document.getElementById('targetDay').value);
-    
-    if (!birthYear || !birthMonth || !birthDay || isNaN(birthHour)) {
-        alert('请填写完整的出生信息');
-        return;
+    try {
+        const birthYear = parseInt(document.getElementById('birthYear').value);
+        const birthMonth = parseInt(document.getElementById('birthMonth').value);
+        const birthDay = parseInt(document.getElementById('birthDay').value);
+        const birthHour = parseInt(document.getElementById('birthHour').value);
+        const gender = document.querySelector('input[name="gender"]:checked').value;
+        const targetYear = parseInt(document.getElementById('targetYear').value);
+        const targetMonth = parseInt(document.getElementById('targetMonth').value);
+        const targetDay = parseInt(document.getElementById('targetDay').value);
+        
+        if (!birthYear || !birthMonth || !birthDay || isNaN(birthHour)) {
+            alert('请填写完整的出生信息');
+            return;
+        }
+        
+        if (!targetYear || !targetMonth || !targetDay) {
+            alert('请填写完整的测算日期');
+            return;
+        }
+        
+        // 计算八字
+        const yearPillar = getYearPillar(birthYear);
+        const monthPillar = getMonthPillar(birthYear, birthMonth, yearPillar.ganIndex);
+        const dayPillar = getDayPillar(birthYear, birthMonth, birthDay);
+        const hourPillar = getHourPillar(birthHour, dayPillar.ganIndex);
+        const sizhu = [yearPillar, monthPillar, dayPillar, hourPillar];
+        
+        // 计算测算日期
+        const targetYearPillar = getYearPillar(targetYear);
+        const targetMonthPillar = getMonthPillar(targetYear, targetMonth, targetYearPillar.ganIndex);
+        const targetDayPillar = getDayPillar(targetYear, targetMonth, targetDay);
+        
+        // 计算日主关系
+        const relation = getShiShen(dayPillar.ganIndex, targetDayPillar.ganIndex);
+        const reading = getReading(relation);
+        
+        // 计算运势分数
+        const scores = calculateScores(relation);
+        
+        // 显示结果
+        displayResults(sizhu, reading, scores, birthYear, birthMonth, birthDay);
+    } catch (error) {
+        console.error('Calculate error:', error);
+        alert('计算出错: ' + error.message);
     }
-    
-    if (!targetYear || !targetMonth || !targetDay) {
-        alert('请填写完整的测算日期');
-        return;
-    }
-    
-    // 计算八字
-    const yearPillar = getYearPillar(birthYear);
-    const monthPillar = getMonthPillar(birthYear, birthMonth, yearPillar.ganIndex);
-    const dayPillar = getDayPillar(birthYear, birthMonth, birthDay);
-    const hourPillar = getHourPillar(birthHour, dayPillar.ganIndex);
-    const sizhu = [yearPillar, monthPillar, dayPillar, hourPillar];
-    
-    // 计算测算日期
-    const targetYearPillar = getYearPillar(targetYear);
-    const targetMonthPillar = getMonthPillar(targetYear, targetMonth, targetYearPillar.ganIndex);
-    const targetDayPillar = getDayPillar(targetYear, targetMonth, targetDay);
-    
-    // 计算日主关系
-    const relation = getShiShen(dayPillar.ganIndex, targetDayPillar.ganIndex);
-    const reading = getReading(relation);
-    
-    // 计算运势分数
-    const scores = calculateScores(relation);
-    
-    // 显示结果
-    displayResults(sizhu, reading, scores, birthYear, birthMonth, birthDay);
 }
 
 function calculateScores(relation) {
@@ -578,12 +583,38 @@ function calculateScores(relation) {
 }
 
 function displayResults(sizhu, reading, scores, birthYear, birthMonth, birthDay) {
-    document.getElementById('result').style.display = 'block';
+    // 防御性检查
+    if (!sizhu || !Array.isArray(sizhu) || sizhu.length === 0) {
+        console.error('Invalid sizhu data:', sizhu);
+        alert('八字计算出错，请刷新页面重试');
+        return;
+    }
+    if (!reading) {
+        console.error('Invalid reading data:', reading);
+        alert('详细解读数据缺失，请刷新页面重试');
+        return;
+    }
+    if (!scores) {
+        console.error('Invalid scores data:', scores);
+        alert('运势评分数据缺失，请刷新页面重试');
+        return;
+    }
     
-    const t = I18N[currentLang];
+    const resultDiv = document.getElementById('result');
+    if (!resultDiv) {
+        console.error('Result element not found');
+        return;
+    }
+    resultDiv.style.display = 'block';
+    
+    const t = I18N[currentLang] || I18N['zh'];
     
     // 显示八字
     const sizhuRow = document.getElementById('sizhuRow');
+    if (!sizhuRow) {
+        console.error('sizhuRow element not found');
+        return;
+    }
     sizhuRow.innerHTML = '';
     const titles = currentLang === 'zh' ? ['年柱', '月柱', '日柱', '时柱'] : 
                    currentLang === 'en' ? ['Year', 'Month', 'Day', 'Hour'] :
