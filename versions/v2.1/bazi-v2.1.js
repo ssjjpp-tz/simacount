@@ -838,6 +838,8 @@ function getXingzuoFortune(xingzuo) {
     };
     return fortunes[currentLang]?.[xingzuo] || XINGZUO_FORTUNE[xingzuo];
 }
+
+function getWuxingDesc(wuxing) {
     const descs = {
         jin: '性格刚毅果断，有决断力，重义气。适合从事金融、法律、管理等工作。',
         mu: '性格仁慈正直，有同情心，善成长。适合从事教育、文化、医疗等工作。',
