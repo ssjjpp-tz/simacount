@@ -718,5 +718,22 @@
     </div>
     
     <script src="bazi-v2.1.js"></script>
+    <script>
+        // 兜底：确保按钮能工作
+        document.addEventListener('DOMContentLoaded', function() {
+            var btn = document.getElementById('calcBtn');
+            if (btn) {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (typeof calculateAll === 'function') {
+                        calculateAll();
+                    } else {
+                        alert('函数未加载，请刷新页面');
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>
