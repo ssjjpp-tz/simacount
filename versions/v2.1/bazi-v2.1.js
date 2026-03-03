@@ -407,35 +407,52 @@ function initDateSelect(yearId, monthId, dayId, startYear, endYear, defaultYear,
     const yearSelect = document.getElementById(yearId);
     const monthSelect = document.getElementById(monthId);
     const daySelect = document.getElementById(dayId);
-    
+
     if (!yearSelect || !monthSelect || !daySelect) {
         console.error('Date select elements not found:', yearId, monthId, dayId);
         return;
     }
-    
-    // 添加年份选项
-    let yearOptions = '<option value="">年</option>';
+
+    // 添加年份选项 - 使用传统 DOM 方法确保兼容性
+    yearSelect.innerHTML = '';
+    const yearDefaultOpt = document.createElement('option');
+    yearDefaultOpt.value = '';
+    yearDefaultOpt.textContent = '年';
+    yearSelect.appendChild(yearDefaultOpt);
+
     for (let y = startYear; y <= endYear; y++) {
-        yearOptions += `<option value="${y}"${y === defaultYear ? ' selected' : ''}>${y}</option>`;
+        const opt = document.createElement('option');
+        opt.value = y;
+        opt.textContent = y;
+        if (y === defaultYear) opt.selected = true;
+        yearSelect.appendChild(opt);
     }
-    yearSelect.innerHTML = yearOptions;
-    
-    // 月份选项已在 HTML 中静态定义，只需设置默认值
+
+    // 设置月份默认值
     if (defaultMonth) {
         monthSelect.value = defaultMonth;
     }
-    
+
     const updateDays = () => {
         const y = parseInt(yearSelect.value) || defaultYear;
         const m = parseInt(monthSelect.value) || defaultMonth;
         const daysInMonth = new Date(y, m, 0).getDate();
-        let dayOptions = '<option value="">日</option>';
+
+        daySelect.innerHTML = '';
+        const dayDefaultOpt = document.createElement('option');
+        dayDefaultOpt.value = '';
+        dayDefaultOpt.textContent = '日';
+        daySelect.appendChild(dayDefaultOpt);
+
         for (let d = 1; d <= daysInMonth; d++) {
-            dayOptions += `<option value="${d}"${d === defaultDay ? ' selected' : ''}>${d}</option>`;
+            const opt = document.createElement('option');
+            opt.value = d;
+            opt.textContent = d;
+            if (d === defaultDay) opt.selected = true;
+            daySelect.appendChild(opt);
         }
-        daySelect.innerHTML = dayOptions;
     };
-    
+
     yearSelect.addEventListener('change', updateDays);
     monthSelect.addEventListener('change', updateDays);
     updateDays();
@@ -448,11 +465,21 @@ function initTimeSelect(hourId) {
         return;
     }
     const now = new Date();
-    let hourOptions = '<option value="">时</option>';
+    const currentHour = now.getHours();
+
+    hourSelect.innerHTML = '';
+    const hourDefaultOpt = document.createElement('option');
+    hourDefaultOpt.value = '';
+    hourDefaultOpt.textContent = '时';
+    hourSelect.appendChild(hourDefaultOpt);
+
     for (let h = 0; h <= 23; h++) {
-        hourOptions += `<option value="${h}"${h === now.getHours() ? ' selected' : ''}>${h}时</option>`;
+        const opt = document.createElement('option');
+        opt.value = h;
+        opt.textContent = h + '时';
+        if (h === currentHour) opt.selected = true;
+        hourSelect.appendChild(opt);
     }
-    hourSelect.innerHTML = hourOptions;
 }
 
 // ==================== 八字计算 ====================
